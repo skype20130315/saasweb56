@@ -47,7 +47,7 @@ public class SaleSummaryImpl extends BaseManagerImpl implements SaleSummary {
 		
 		if("getSaleSum".equals(actionType)){
 			SaleReport saleReport = (SaleReport) o[0]; // 查询条件
-			String goodssaleTable = "YW_GOODSSALE" + saleReport.getGssgcode();
+			String goodssaleTable = "YW_GOODSSALE" + saleReport.getGssgcode() ;
 			String gssgcode = saleReport.getGssgcode();//门店
 			String supcode = saleReport.getSupcode();//供应商
 			String startDate = saleReport.getStartDate();//开始时间
