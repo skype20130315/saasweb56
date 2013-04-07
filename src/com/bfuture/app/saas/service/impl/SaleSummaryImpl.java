@@ -47,6 +47,7 @@ public class SaleSummaryImpl extends BaseManagerImpl implements SaleSummary {
 		
 		if("getSaleSum".equals(actionType)){
 			SaleReport saleReport = (SaleReport) o[0]; // 查询条件
+			String goodssaleTable = "YW_GOODSSALE" + saleReport.getGssgcode();
 			String gssgcode = saleReport.getGssgcode();//门店
 			String supcode = saleReport.getSupcode();//供应商
 			String startDate = saleReport.getStartDate();//开始时间
@@ -55,7 +56,7 @@ public class SaleSummaryImpl extends BaseManagerImpl implements SaleSummary {
 			String gsgdname = saleReport.getGsgdname();//商品名称
 			String temp5 = saleReport.getTemp5();//合同编码
 			try {
-				StringBuffer sumSql_sum = new StringBuffer("SELECT CAST('合计' AS VARCHAR(32)) SHPCODE,ROUND(SUM(S.GSXSSL), 2) GSXSSL,ROUND(SUM(S.GSHSJJJE), 2) GSHSJJJE,ROUND(SUM(S.GSXSSR), 2) GSXSJE FROM YW_GOODSSALE S left join INF_GOODS G on S.GSGDID = G.GDID and S.GSSGCODE = G.GDSGCODE WHERE 1 = 1");
+				StringBuffer sumSql_sum = new StringBuffer("SELECT CAST('合计' AS VARCHAR(32)) SHPCODE,ROUND(SUM(S.GSXSSL), 2) GSXSSL,ROUND(SUM(S.GSHSJJJE), 2) GSHSJJJE,ROUND(SUM(S.GSXSSR), 2) GSXSJE FROM "+goodssaleTable+" S left join INF_GOODS G on S.GSGDID = G.GDID and S.GSSGCODE = G.GDSGCODE WHERE 1 = 1");
 				if (!StringUtil.isBlank(saleReport.getGssgcode())) {
 					log.debug("saleReport.getGssgcode(): "
 							+ saleReport.getGssgcode());
