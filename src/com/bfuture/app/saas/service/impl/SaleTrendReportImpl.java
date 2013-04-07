@@ -33,13 +33,14 @@ public class SaleTrendReportImpl extends BaseManagerImpl implements BaseManager 
 		if( "getChart".equals( actionType ) ){
 			try{
 				YwGoodssale goodsale = (YwGoodssale)o[0];
+				String goodssaleTable="YW_GOODSSALE"+goodsale.getGssgcode();
 				StringBuffer chartSql =null;
 				boolean flag_3010=goodsale.getGssgcode().equals("3010");
 //				StringBuffer chartSql = new StringBuffer( "SELECT SYSDATE RQ,TO_CHAR(T.GSRQ,'yyyy-MM-DD') GSRQ,SUM(GSXSSR) GSXSSR FROM YW_GOODSSALE T WHERE 1 = 1  " );
 				if(flag_3010){
 					chartSql = new StringBuffer( "SELECT SYSDATE RQ,TO_CHAR(T.GSRQ,'yyyy-MM-DD') GSRQ,SUM(GSXSSL) GSXSSL FROM YW_GOODSSALE_M T WHERE 1 = 1  " );
 				}else{
-					chartSql = new StringBuffer( "SELECT SYSDATE RQ,TO_CHAR(T.GSRQ,'yyyy-MM-DD') GSRQ,SUM(GSXSSL) GSXSSL FROM YW_GOODSSALE T WHERE 1 = 1  " );
+					chartSql = new StringBuffer( "SELECT SYSDATE RQ,TO_CHAR(T.GSRQ,'yyyy-MM-DD') GSRQ,SUM(GSXSSL) GSXSSL FROM "+goodssaleTable+" T WHERE 1 = 1  " );
 				}
 				/*
 				if(goodsale.getGssgcode().equals("4006")){
@@ -369,11 +370,11 @@ public class SaleTrendReportImpl extends BaseManagerImpl implements BaseManager 
 	@Override
 	public ReturnObject getResult(Object o) {
 		ReturnObject result = new ReturnObject();
-		
 		try{
 			YwGoodssale goodsale = (YwGoodssale)o;			
-			
-			StringBuffer countSql = new StringBuffer( "select count(*) from (SELECT T.GSRQ FROM YW_GOODSSALE T  " );
+			String goodssaleTable="YW_GOODSSALE"+goodsale.getGssgcode();
+
+			StringBuffer countSql = new StringBuffer( "select count(*) from (SELECT T.GSRQ FROM "+goodssaleTable+" T  " );
 				countSql.append( " LEFT JOIN INF_SHOP T1 ON T.GSMFID=T1.SHPCODE AND T.GSSGCODE = T1.SGCODE WHERE 1 = 1 " );
 				
 				if( "Y".equals( goodsale.getIsSup() ) ){
@@ -411,7 +412,7 @@ public class SaleTrendReportImpl extends BaseManagerImpl implements BaseManager 
 					result.setTotal( Integer.parseInt( countMap.get( "1" ).toString() ) );
 				}
 				
-				StringBuffer sql = new StringBuffer( "SELECT T.GSRQ,case when T1.SHPCODE is null then 'unknow' else T1.SHPCODE end SHPCODE,case when T1.SHPNAME is null then '其他' else T1.SHPNAME end SHPNAME,SUM(GSXSSL) GSXSSL,SUM(GSHSJJJE) GSHSJJJE,SUM(GSXSSR) GSXSSR FROM YW_GOODSSALE T  " );
+				StringBuffer sql = new StringBuffer( "SELECT T.GSRQ,case when T1.SHPCODE is null then 'unknow' else T1.SHPCODE end SHPCODE,case when T1.SHPNAME is null then '其他' else T1.SHPNAME end SHPNAME,SUM(GSXSSL) GSXSSL,SUM(GSHSJJJE) GSHSJJJE,SUM(GSXSSR) GSXSSR FROM "+goodssaleTable+" T  " );
 				sql.append( " LEFT JOIN INF_SHOP T1 ON T.GSMFID=T1.SHPCODE AND T.GSSGCODE = T1.SGCODE WHERE 1 = 1 " );
 				
 				if( "Y".equals( goodsale.getIsSup() ) ){
@@ -473,7 +474,7 @@ public class SaleTrendReportImpl extends BaseManagerImpl implements BaseManager 
 					result.setFooter( lstSumResult );
 				}
 				
-				StringBuffer chartSql = new StringBuffer( "SELECT T.GSRQ,case when T1.SHPCODE is null then 'unknow' else T1.SHPCODE end SHPCODE,case when T1.SHPNAME is null then '其他' else T1.SHPNAME end SHPNAME,SUM(GSXSSL) GSXSSL,SUM(GSHSJJJE) GSHSJJJE,SUM(GSXSSR) GSXSSR FROM YW_GOODSSALE T  " );
+				StringBuffer chartSql = new StringBuffer( "SELECT T.GSRQ,case when T1.SHPCODE is null then 'unknow' else T1.SHPCODE end SHPCODE,case when T1.SHPNAME is null then '其他' else T1.SHPNAME end SHPNAME,SUM(GSXSSL) GSXSSL,SUM(GSHSJJJE) GSHSJJJE,SUM(GSXSSR) GSXSSR FROM "+goodssaleTable+" T  " );
 				chartSql.append( " LEFT JOIN INF_SHOP T1 ON T.GSMFID=T1.SHPCODE AND T.GSSGCODE = T1.SGCODE WHERE 1 = 1 " );
 				
 				if( "Y".equals( goodsale.getIsSup() ) ){
@@ -640,15 +641,16 @@ public class SaleTrendReportImpl extends BaseManagerImpl implements BaseManager 
 		log.info("SaleTrendReportImpl.getSaleTrendReport()");
 		try{
 			YwGoodssale goodsale = (YwGoodssale)o[0];
+			String goodssaleTable="YW_GOODSSALE"+goodsale.getGssgcode();
 			boolean flag_3010=goodsale.getGssgcode().equals("3010");
 			boolean flag_3009=goodsale.getGssgcode().equals("3009");
 			StringBuffer chartSql = null;
 			if(flag_3010){
 				chartSql = new StringBuffer( "SELECT to_char(T.GSRQ,'YYYY-MM-DD') GSRQ,case when T1.SHPCODE is null then 'unknow' else T1.SHPCODE end SHPCODE,case when T1.SHPNAME is null then '其他' else T1.SHPNAME end SHPNAME,SUM(GSXSSL) GSXSSL,SUM(GSHSJJJE) GSHSJJJE,SUM(GSXSSR) GSXSSR, T2.supid INFSUPID,T2.supname INFSUPNAME FROM YW_GOODSSALE_M T  " );				
 			}else if(flag_3009){
-				chartSql = new StringBuffer( "SELECT to_char(T.GSRQ,'YYYY-MM-DD') GSRQ,case when T1.SHPCODE is null then 'unknow' else T1.SHPCODE end SHPCODE,case when T1.SHPNAME is null then '其他' else T1.SHPNAME end SHPNAME,SUM(GSXSSL) GSXSSL,SUM(GSHSJJJE) GSHSJJJE,SUM(GSXSSR) GSXSSR,SUM(GSXSJE) GSXSJE,(CASE WHEN SUM(T.GSXSSR) IS NULL OR SUM(T.GSXSSR)=0 THEN '0.00%' ELSE ROUND((SUM(T.GSXSSR)-SUM(T.GSHSJJJE))/SUM(T.GSXSSR)*100,2)||'%' END )MLL, T2.supid INFSUPID,T2.supname INFSUPNAME FROM YW_GOODSSALE T  " );				
+				chartSql = new StringBuffer( "SELECT to_char(T.GSRQ,'YYYY-MM-DD') GSRQ,case when T1.SHPCODE is null then 'unknow' else T1.SHPCODE end SHPCODE,case when T1.SHPNAME is null then '其他' else T1.SHPNAME end SHPNAME,SUM(GSXSSL) GSXSSL,SUM(GSHSJJJE) GSHSJJJE,SUM(GSXSSR) GSXSSR,SUM(GSXSJE) GSXSJE,(CASE WHEN SUM(T.GSXSSR) IS NULL OR SUM(T.GSXSSR)=0 THEN '0.00%' ELSE ROUND((SUM(T.GSXSSR)-SUM(T.GSHSJJJE))/SUM(T.GSXSSR)*100,2)||'%' END )MLL, T2.supid INFSUPID,T2.supname INFSUPNAME FROM "+goodssaleTable+" T  " );				
 			}else{
-				chartSql = new StringBuffer( "SELECT to_char(T.GSRQ,'YYYY-MM-DD') GSRQ,case when T1.SHPCODE is null then 'unknow' else T1.SHPCODE end SHPCODE,case when T1.SHPNAME is null then '其他' else T1.SHPNAME end SHPNAME,SUM(GSXSSL) GSXSSL,SUM(GSHSJJJE) GSHSJJJE,SUM(GSXSSR) GSXSSR,SUM(GSXSJE) GSXSJE, T2.supid INFSUPID,T2.supname INFSUPNAME FROM YW_GOODSSALE T  " );				
+				chartSql = new StringBuffer( "SELECT to_char(T.GSRQ,'YYYY-MM-DD') GSRQ,case when T1.SHPCODE is null then 'unknow' else T1.SHPCODE end SHPCODE,case when T1.SHPNAME is null then '其他' else T1.SHPNAME end SHPNAME,SUM(GSXSSL) GSXSSL,SUM(GSHSJJJE) GSHSJJJE,SUM(GSXSSR) GSXSSR,SUM(GSXSJE) GSXSJE, T2.supid INFSUPID,T2.supname INFSUPNAME FROM "+goodssaleTable+" T  " );				
 			}
 			if(flag_3009){
 				chartSql.append( " LEFT JOIN INF_SHOP T1 ON T.GSMFID=T1.SHPCODE AND T.GSSGCODE = T1.SGCODE left join inf_relation_jm T2 on T2.sgcode = T.gssgcode and T2.supid = substr(T.gssupid,0,3) WHERE 1 = 1 " );

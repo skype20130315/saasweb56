@@ -26,14 +26,15 @@ public class SaleABCReportImpl extends BaseManagerImpl implements BaseManager {
 		ReturnObject result = new ReturnObject();
 		
 		try{
-			YwGoodssale goodsale = (YwGoodssale)o;			
+			YwGoodssale goodsale = (YwGoodssale)o;	
+			String goodssaleTable="YW_GOODSSALE"+goodsale.getGssgcode();
 			boolean flag_3009=goodsale.getGssgcode().equals("3009");
 			boolean flag_3010=goodsale.getGssgcode().equals("3010");
-			StringBuffer sumSql = new StringBuffer( "SELECT cast('合计' as varchar2(32)) GDID,SUM(GSXSSL) GSXSSL,SUM(GSHSJJJE) GSHSJJJE,SUM(GSXSSR) GSXSSR, 100 ZB, 100 LJZB FROM YW_GOODSSALE T WHERE 1 = 1 " );
+			StringBuffer sumSql = new StringBuffer( "SELECT cast('合计' as varchar2(32)) GDID,SUM(GSXSSL) GSXSSL,SUM(GSHSJJJE) GSHSJJJE,SUM(GSXSSR) GSXSSR, 100 ZB, 100 LJZB FROM "+goodssaleTable+" T WHERE 1 = 1 " );
 			if(flag_3010){
 				sumSql = new StringBuffer( "SELECT cast('合计' as varchar2(32)) GDID,SUM(GSXSSL) GSXSSL,SUM(GSHSJJJE) GSHSJJJE,SUM(GSXSSR) GSXSSR, 100 ZB, 100 LJZB FROM YW_GOODSSALE_M T WHERE 1 = 1 " );
 			}else{
-				sumSql = new StringBuffer( "SELECT cast('合计' as varchar2(32)) GDID,SUM(GSXSSL) GSXSSL,SUM(GSHSJJJE) GSHSJJJE,SUM(GSXSSR) GSXSSR,SUM(GSXSJE) GSXSJE, 100 ZB, 100 LJZB FROM YW_GOODSSALE T WHERE 1 = 1 " );
+				sumSql = new StringBuffer( "SELECT cast('合计' as varchar2(32)) GDID,SUM(GSXSSL) GSXSSL,SUM(GSHSJJJE) GSHSJJJE,SUM(GSXSSR) GSXSSR,SUM(GSXSJE) GSXSJE, 100 ZB, 100 LJZB FROM "+goodssaleTable+" T WHERE 1 = 1 " );
 			}
 			if( !StringUtil.isBlank( goodsale.getGssupid() ) ){
 				if(flag_3009){
@@ -73,7 +74,7 @@ public class SaleABCReportImpl extends BaseManagerImpl implements BaseManager {
 				if(flag_3010){
 					sql = new StringBuffer( "SELECT case when T1.GDID is null then 'unknow' else T1.GDID end GDID,case when T1.GDNAME is null then '其他' else T1.GDNAME end GDNAME,T1.GDSPEC,T1.GDUNIT,SUM(GSXSSL) GSXSSL,SUM(GSHSJJJE) GSHSJJJE,SUM(GSXSSR) GSXSSR FROM YW_GOODSSALE_M T  " );
 				}else{
-					sql = new StringBuffer( "SELECT case when T1.GDID is null then 'unknow' else T1.GDID end GDID,case when T1.GDNAME is null then '其他' else T1.GDNAME end GDNAME,T1.GDSPEC,T1.GDUNIT,SUM(GSXSSL) GSXSSL,SUM(GSHSJJJE) GSHSJJJE,SUM(GSXSSR) GSXSSR,SUM(GSXSJE) GSXSJE FROM YW_GOODSSALE T  " );
+					sql = new StringBuffer( "SELECT case when T1.GDID is null then 'unknow' else T1.GDID end GDID,case when T1.GDNAME is null then '其他' else T1.GDNAME end GDNAME,T1.GDSPEC,T1.GDUNIT,SUM(GSXSSL) GSXSSL,SUM(GSHSJJJE) GSHSJJJE,SUM(GSXSSR) GSXSSR,SUM(GSXSJE) GSXSJE FROM "+goodssaleTable+" T  " );
 				}
 				if(flag_3009){
 					sql.append( " LEFT JOIN INF_GOODS_JM T1 ON T.GSGDID=T1.GDID AND T.GSSGCODE = T1.GDSGCODE and T1.GDSUPID=T.GSSUPID   AND T.GSMFID=T1.GDMFID  WHERE 1 = 1 " );

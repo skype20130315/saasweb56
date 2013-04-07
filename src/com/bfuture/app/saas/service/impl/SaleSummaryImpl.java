@@ -47,14 +47,16 @@ public class SaleSummaryImpl extends BaseManagerImpl implements SaleSummary {
 		
 		if("getSaleSum".equals(actionType)){
 			SaleReport saleReport = (SaleReport) o[0]; // 查询条件
-			String goodssaleTable = "YW_GOODSSALE" + saleReport.getGssgcode() ;
-			String gssgcode = saleReport.getGssgcode();//门店
+			
+			
 			String supcode = saleReport.getSupcode();//供应商
 			String startDate = saleReport.getStartDate();//开始时间
 			String endDate = saleReport.getEndDate();//结束时间
 			String gdbarcode = saleReport.getGdbarcode();//商品条码
 			String gsgdname = saleReport.getGsgdname();//商品名称
 			String temp5 = saleReport.getTemp5();//合同编码
+			String gssgcode = saleReport.getGssgcode();//门店
+			String goodssaleTable="YW_GOODSSALE"+gssgcode;
 			try {
 				StringBuffer sumSql_sum = new StringBuffer("SELECT CAST('合计' AS VARCHAR(32)) SHPCODE,ROUND(SUM(S.GSXSSL), 2) GSXSSL,ROUND(SUM(S.GSHSJJJE), 2) GSHSJJJE,ROUND(SUM(S.GSXSSR), 2) GSXSJE FROM "+goodssaleTable+" S left join INF_GOODS G on S.GSGDID = G.GDID and S.GSSGCODE = G.GDSGCODE WHERE 1 = 1");
 				if (!StringUtil.isBlank(saleReport.getGssgcode())) {
@@ -106,7 +108,7 @@ public class SaleSummaryImpl extends BaseManagerImpl implements SaleSummary {
 				log.debug("shpsum:" + lstSumResult_sum);
 				
 				if (lstSumResult_sum != null && lstSumResult_sum.size() > 0) {
-					StringBuffer sumSql = new StringBuffer("select S.GSSUPID, D.SUPNAME, G.GDID, G.GDBARCODE, G.GDNAME, G.GDPPNAME, G.GDSPEC, G.GDUNIT, ROUND(SUM(S.GSXSSL),2) GSXSSL,ROUND(SUM(S.GSHSJJJE),2) GSHSJJJE, ROUND(SUM(S.GSXSSR),2) GSXSJE, S.TEMP3, SUM(S.TEMP3) XSSR,S.TEMP5 from YW_GOODSSALE S LEFT JOIN INF_SUPINFO D ON S.GSSGCODE = D.SUPSGCODE AND S.GSSUPID = D.SUPID left join INF_GOODS G on S.GSGDID = G.GDID and S.GSSGCODE = G.GDSGCODE where 1 = 1 and S.GSXSSL != 0");
+					StringBuffer sumSql = new StringBuffer("select S.GSSUPID, D.SUPNAME, G.GDID, G.GDBARCODE, G.GDNAME, G.GDPPNAME, G.GDSPEC, G.GDUNIT, ROUND(SUM(S.GSXSSL),2) GSXSSL,ROUND(SUM(S.GSHSJJJE),2) GSHSJJJE, ROUND(SUM(S.GSXSSR),2) GSXSJE, S.TEMP3, SUM(S.TEMP3) XSSR,S.TEMP5 from "+goodssaleTable+" S LEFT JOIN INF_SUPINFO D ON S.GSSGCODE = D.SUPSGCODE AND S.GSSUPID = D.SUPID left join INF_GOODS G on S.GSGDID = G.GDID and S.GSSGCODE = G.GDSGCODE where 1 = 1 and S.GSXSSL != 0");
 					
 					if (!StringUtil.isBlank(startDate)) {
 						sumSql.append(" and S.GSRQ >= to_date('").append(saleReport.getStartDate()).append("','yyyy-MM-dd')");
@@ -164,6 +166,8 @@ public class SaleSummaryImpl extends BaseManagerImpl implements SaleSummary {
 			
 		}else if ("getShopSaleDetail".equals(actionType)) {
 			SaleReport saleReport = (SaleReport) o[0]; 
+			String gssgcode = saleReport.getGssgcode();//门店
+			String goodssaleTable="YW_GOODSSALE"+gssgcode;
 			try {
 				boolean flag=saleReport.getGssgcode().equals("3009");
 				boolean flag_3010=saleReport.getGssgcode().equals("3010");
@@ -176,7 +180,7 @@ public class SaleSummaryImpl extends BaseManagerImpl implements SaleSummary {
     				"select cast('合计' as varchar2(32)) GSRQ,SUM(GSXSSL) GSXSSL,round(SUM(GSXSSR),2) GSXSJE,round(SUM(S.GSHSJJJE),2) GSHSJJJE,SUM(S.GSXSSL*S.TEMP3) XSSR FROM YW_GOODSSALE_M S left join INF_GOODS G on S.GSGDID=G.GDID and S.GSSGCODE=G.GDSGCODE where 1 = 1 ");
                 }else{
                 	sumSql = new StringBuffer(
-    				"select cast('合计' as varchar2(32)) GSRQ,SUM(GSXSSL) GSXSSL,round(SUM(GSXSJE),2) GSXSJE,round(SUM(S.GSHSJJJE),2) GSHSJJJE,round(SUM(S.GSXSSR),2) XSSR2,SUM(S.GSXSSL*S.TEMP3) XSSR FROM YW_GOODSSALE S left join INF_GOODS G on S.GSGDID=G.GDID and S.GSSGCODE=G.GDSGCODE where 1 = 1 ");
+    				"select cast('合计' as varchar2(32)) GSRQ,SUM(GSXSSL) GSXSSL,round(SUM(GSXSJE),2) GSXSJE,round(SUM(S.GSHSJJJE),2) GSHSJJJE,round(SUM(S.GSXSSR),2) XSSR2,SUM(S.GSXSSL*S.TEMP3) XSSR "+goodssaleTable+" S left join INF_GOODS G on S.GSGDID=G.GDID and S.GSSGCODE=G.GDSGCODE where 1 = 1 ");
                 }
 				if (!StringUtil.isBlank(saleReport.getGssgcode())) {
 					log.debug("saleReport.getGssgcode(): "
@@ -231,7 +235,7 @@ public class SaleSummaryImpl extends BaseManagerImpl implements SaleSummary {
                      }else if("3006".equals(saleReport.getGssgcode().toString())){
                     	 countSql = new StringBuffer("select count(*) from (select to_char(S.GSRQ,'yyyy-MM-dd') from YW_GOODSSALE S where 1=1");
                      }else{
-                    	 countSql = new StringBuffer("select count(*) from (select S.GSRQ from YW_GOODSSALE S where 1=1");
+                    	 countSql = new StringBuffer("select count(*) from (select S.GSRQ from "+goodssaleTable+" S where 1=1");
                      }
 					if (!StringUtil.isBlank(saleReport.getGssgcode())) {
 						log.debug("saleReport.getGssgcode(): "
@@ -306,7 +310,7 @@ public class SaleSummaryImpl extends BaseManagerImpl implements SaleSummary {
 				    	sql = new StringBuffer("SELECT to_char(S.GSRQ,'yyyy-MM-dd') as GSRQ,SUM(S.GSXSSL) AS GSXSSL,round(SUM(S.GSXSJE),2) GSXSJE,round(SUM(S.GSHSJJJE),2) AS GSHSJJJE,SUM(S.GSXSSL*S.TEMP2) AS GSXSSR FROM YW_GOODSSALE S LEFT JOIN INF_SUPINFO D ON S.GSSGCODE=D.SUPSGCODE AND S.GSSUPID=D.SUPID WHERE 1=1");
 				    }else{
 				    	sql = new StringBuffer(
-						"SELECT to_char(S.GSRQ,'yyyy-MM-dd') as GSRQ,S.GSSUPID,D.SUPNAME,SUM(S.GSXSSL) AS GSXSSL,round(SUM(S.GSXSJE),2) GSXSJE,round(SUM(S.GSHSJJJE),2) AS GSHSJJJE,round(SUM(S.GSXSSR),2) AS XSSR2,SUM(S.GSXSSL*S.TEMP2) AS GSXSSR FROM YW_GOODSSALE S LEFT JOIN INF_SUPINFO D ON S.GSSGCODE=D.SUPSGCODE AND S.GSSUPID=D.SUPID WHERE 1=1");
+						"SELECT to_char(S.GSRQ,'yyyy-MM-dd') as GSRQ,S.GSSUPID,D.SUPNAME,SUM(S.GSXSSL) AS GSXSSL,round(SUM(S.GSXSJE),2) GSXSJE,round(SUM(S.GSHSJJJE),2) AS GSHSJJJE,round(SUM(S.GSXSSR),2) AS XSSR2,SUM(S.GSXSSL*S.TEMP2) AS GSXSSR FROM "+goodssaleTable+" S LEFT JOIN INF_SUPINFO D ON S.GSSGCODE=D.SUPSGCODE AND S.GSSUPID=D.SUPID WHERE 1=1");
 				    }
 					int limit = saleReport.getRows();
 					log.debug("limit: " + limit);
@@ -557,6 +561,8 @@ public class SaleSummaryImpl extends BaseManagerImpl implements SaleSummary {
 			
 		} else if ("getGsrqShopSale".equals(actionType)) {
 			SaleReport saleReport = (SaleReport) o[0]; 
+			String gssgcode = saleReport.getGssgcode();//门店
+			String goodssaleTable="YW_GOODSSALE"+gssgcode;
 			try {
 				boolean flag=saleReport.getGssgcode().equals("3009");
 				boolean flag_3010=saleReport.getGssgcode().equals("3010");
@@ -569,7 +575,7 @@ public class SaleSummaryImpl extends BaseManagerImpl implements SaleSummary {
 					"SELECT cast('合计' as varchar2(30)) GSRQ,SUM(GSXSSL) GSXSSL,round(SUM(GSXSJE),2) GSXSJE,round(SUM(S.GSHSJJJE),2) GSXSSR ,round(SUM(S.GSXSSR),2) XSSR ,(CASE WHEN SUM(GSXSJE) IS NULL OR SUM(GSXSJE)=0 THEN '0.00%' ELSE ROUND((SUM(GSXSJE)-SUM(GSHSJJJE))/SUM(GSXSJE)*100,2)||'%' END) MLL FROM YW_GOODSSALE S where 1=1");					
 				}else{
 					sumSql = new StringBuffer(
-					"SELECT cast('合计' as varchar2(30)) GDID,SUM(GSXSSL) GSXSSL,round(SUM(GSXSJE),2) GSXSJE,round(SUM(S.GSHSJJJE),2) GSXSSR ,round(SUM(S.GSXSSR),2) XSSR FROM YW_GOODSSALE S where 1=1");					
+					"SELECT cast('合计' as varchar2(30)) GDID,SUM(GSXSSL) GSXSSL,round(SUM(GSXSJE),2) GSXSJE,round(SUM(S.GSHSJJJE),2) GSXSSR ,round(SUM(S.GSXSSR),2) XSSR FROM "+goodssaleTable+" S where 1=1");					
 				}
 				if (!StringUtil.isBlank(saleReport.getGssgcode())) {
 					log.debug("saleReport.getGssgcode(): "
@@ -617,13 +623,13 @@ public class SaleSummaryImpl extends BaseManagerImpl implements SaleSummary {
 					StringBuffer countSql = null;
 						if(flag){
 							 countSql = new StringBuffer(
-							"select count(*) from YW_GOODSSALE S left join INF_GOODS_JM G on S.GSGDID=G.GDID and S.GSSGCODE=G.GDSGCODE and S.GSSUPID=G.GDSUPID  and G.GDMFID=S.GSMFID  where 1=1");
+							"select count(*) from "+goodssaleTable+" S left join INF_GOODS_JM G on S.GSGDID=G.GDID and S.GSSGCODE=G.GDSGCODE and S.GSSUPID=G.GDSUPID  and G.GDMFID=S.GSMFID  where 1=1");
 						}else if(flag_3010){
 							 countSql = new StringBuffer(
 								"select count(*) from YW_GOODSSALE_M S left join INF_GOODS G on S.GSGDID=G.GDID and S.GSSGCODE=G.GDSGCODE where 1=1   and S.GSXSSL != 0 ");
 						}else{
 							 countSql = new StringBuffer(
-							"select count(*) from YW_GOODSSALE S left join INF_GOODS G on S.GSGDID=G.GDID and S.GSSGCODE=G.GDSGCODE where 1=1");
+							"select count(*) from "+goodssaleTable+" S left join INF_GOODS G on S.GSGDID=G.GDID and S.GSSGCODE=G.GDSGCODE where 1=1");
 						}
 					if (!StringUtil.isBlank(saleReport.getGssgcode())) {
 						log.debug("saleReport.getGssgcode(): "
@@ -679,7 +685,7 @@ public class SaleSummaryImpl extends BaseManagerImpl implements SaleSummary {
 					if(flag){
 						 sql = new StringBuffer(
 								"select to_char(S.GSRQ,'yyyy-mm-dd') GSRQ,G.GDID,G.GDNAME,G.GDPPNAME,G.GDSPEC,G.GDUNIT,S.GSXSSL,S.GSXSJE GSXSJE,S.GSHSJJJE GSXSSR,(CASE WHEN S.GSXSJE IS NULL OR S.GSXSJE=0 THEN '0.00%' ELSE ROUND((S.GSXSJE-S.GSHSJJJE)/S.GSXSJE*100,2)||'%' END )MLL, S.GSSUPID,D.SUPNAME "
-								+"from YW_GOODSSALE S left join INF_GOODS_JM G on S.GSGDID=G.GDID and S.GSSGCODE=G.GDSGCODE and G.GDSUPID=S.GSSUPID and S.GSMFID=G.GDMFID LEFT JOIN INF_RELATION_JM D ON S.GSSGCODE=D.SGCODE AND SUBSTR(S.GSSUPID,0,3)=D.SUPID where 1=1");
+								+"from "+goodssaleTable+" S left join INF_GOODS_JM G on S.GSGDID=G.GDID and S.GSSGCODE=G.GDSGCODE and G.GDSUPID=S.GSSUPID and S.GSMFID=G.GDMFID LEFT JOIN INF_RELATION_JM D ON S.GSSGCODE=D.SGCODE AND SUBSTR(S.GSSUPID,0,3)=D.SUPID where 1=1");
 					}else if(flag_3010){
 						sql = new StringBuffer(
 								"select G.GDID,G.GDNAME,G.GDPPNAME,G.GDSPEC,G.GDUNIT,S.GSXSSL,S.GSXSSR GSXSJE,S.GSHSJJJE GSXSSR,S.GSSUPID,D.SUPNAME,S.GSBARCODE BARCODE "
@@ -691,7 +697,7 @@ public class SaleSummaryImpl extends BaseManagerImpl implements SaleSummary {
 					}else{
 						 sql = new StringBuffer(
 								"select G.GDID,G.GDNAME,G.GDPPNAME,G.GDSPEC,G.GDUNIT,S.GSXSSL,S.GSXSJE GSXSJE,to_char(S.GSRQ, 'yyyy-MM-dd')GSRQ,S.GSHSJJJE GSXSSR ,S.GSXSSR XSSR,S.GSSUPID,D.SUPNAME,G.GDBARCODE BARCODE,s.temp5 "
-								+"from YW_GOODSSALE S left join INF_GOODS G on S.GSGDID=G.GDID and S.GSSGCODE=G.GDSGCODE LEFT JOIN INF_SUPINFO D ON S.GSSGCODE=D.SUPSGCODE AND S.GSSUPID=D.SUPID where 1=1");
+								+"from "+goodssaleTable+" S left join INF_GOODS G on S.GSGDID=G.GDID and S.GSSGCODE=G.GDSGCODE LEFT JOIN INF_SUPINFO D ON S.GSSGCODE=D.SUPSGCODE AND S.GSSUPID=D.SUPID where 1=1");
 					}
 					int limit = saleReport.getRows();
 					log.debug("limit: " + limit);
@@ -889,6 +895,7 @@ public class SaleSummaryImpl extends BaseManagerImpl implements SaleSummary {
 			//System.out.println("-------------------------------------");
 			try {
 				Stock stock = (Stock) o[0]; 
+				String stockTable=stock.getSgcode()+"YW_ZRSTOCK";
 				boolean flag=stock.getSgcode().equals("3009");
 				StringBuffer sumSql = null;
 				if("3029".equals(user.getSgcode()) && "S".equals(user.getSutype()+"")){
@@ -896,7 +903,7 @@ public class SaleSummaryImpl extends BaseManagerImpl implements SaleSummary {
 					"SELECT cast('合计' as varchar2(30)) SHPCODE,SUM(case when Z.ZSKCSL >=0 then Z.ZSKCSL else 0 end ) ZSKCSL,SUM(case when Z.ZSKCJE>=0 then Z.ZSKCJE else 0 end ) ZSKCJE from YW_ZRSTOCK Z left join INF_SHOP P on Z.ZSSGCODE=P.SGCODE and Z.ZSMFID=P.SHPCODE where 1=1");
 				}else{
 					sumSql = new StringBuffer(
-					"SELECT cast('合计' as varchar2(30)) SHPCODE,SUM(Z.ZSKCSL) ZSKCSL,SUM(Z.ZSKCJE) ZSKCJE from YW_ZRSTOCK Z left join INF_SHOP P on Z.ZSSGCODE=P.SGCODE and Z.ZSMFID=P.SHPCODE where 1=1");
+					"SELECT cast('合计' as varchar2(30)) SHPCODE,SUM(Z.ZSKCSL) ZSKCSL,SUM(Z.ZSKCJE) ZSKCJE from "+stockTable+" Z left join INF_SHOP P on Z.ZSSGCODE=P.SGCODE and Z.ZSMFID=P.SHPCODE where 1=1");
 				}
 				if (!StringUtil.isBlank(stock.getSgcode())) {
 					log.debug("stock.getSgcode(): " + stock.getSgcode());
@@ -932,7 +939,7 @@ public class SaleSummaryImpl extends BaseManagerImpl implements SaleSummary {
 				//log.debug(lstSumResult);
 				if (lstSumResult != null && lstSumResult.size() > 0) {
 					StringBuffer countSql = new StringBuffer(
-							"select count(*) from YW_ZRSTOCK Z left join INF_SHOP P on Z.ZSSGCODE=P.SGCODE and Z.ZSMFID=P.SHPCODE where 1=1");
+							"select count(*) from "+stockTable+" Z left join INF_SHOP P on Z.ZSSGCODE=P.SGCODE and Z.ZSMFID=P.SHPCODE where 1=1");
 
 					if (!StringUtil.isBlank(stock.getSgcode())) {
 						log.debug("stock.getSgcode(): " + stock.getSgcode());
@@ -981,10 +988,10 @@ public class SaleSummaryImpl extends BaseManagerImpl implements SaleSummary {
 					StringBuffer sql = null;
 					if("3029".equals(user.getSgcode()) && "S".equals(user.getSutype()+"")){
 						sql = new StringBuffer(
-						"select P.SHPCODE,P.SHPNAME,(case when Z.ZSKCSL>=0 then Z.ZSKCSL else 0 end)ZSKCSL ,(case when Z.ZSKCJE>=0 then Z.ZSKCJE else 0 end)ZSKCJE,ZSSUPID SSUPID,to_char(sysdate-1,'yyyy-mm-dd')KCRQ,SUPNAME from YW_ZRSTOCK Z LEFT JOIN INF_SUPINFO D ON Z.ZSSGCODE=D.SUPSGCODE AND Z.ZSSUPID=D.SUPID left join INF_SHOP P on Z.ZSSGCODE=P.SGCODE and Z.ZSMFID=P.SHPCODE where 1=1");
+						"select P.SHPCODE,P.SHPNAME,(case when Z.ZSKCSL>=0 then Z.ZSKCSL else 0 end)ZSKCSL ,(case when Z.ZSKCJE>=0 then Z.ZSKCJE else 0 end)ZSKCJE,ZSSUPID SSUPID,to_char(sysdate-1,'yyyy-mm-dd')KCRQ,SUPNAME from "+stockTable+" Z LEFT JOIN INF_SUPINFO D ON Z.ZSSGCODE=D.SUPSGCODE AND Z.ZSSUPID=D.SUPID left join INF_SHOP P on Z.ZSSGCODE=P.SGCODE and Z.ZSMFID=P.SHPCODE where 1=1");
 					}else{
 						sql = new StringBuffer(
-						"select P.SHPCODE,P.SHPNAME,Z.ZSKCSL,Z.ZSKCJE,ZSSUPID SSUPID,to_char(sysdate-1,'yyyy-mm-dd')KCRQ,SUPNAME from YW_ZRSTOCK Z LEFT JOIN INF_SUPINFO D ON Z.ZSSGCODE=D.SUPSGCODE AND Z.ZSSUPID=D.SUPID left join INF_SHOP P on Z.ZSSGCODE=P.SGCODE and Z.ZSMFID=P.SHPCODE where 1=1");
+						"select P.SHPCODE,P.SHPNAME,Z.ZSKCSL,Z.ZSKCJE,ZSSUPID SSUPID,to_char(sysdate-1,'yyyy-mm-dd')KCRQ,SUPNAME from "+stockTable+" Z LEFT JOIN INF_SUPINFO D ON Z.ZSSGCODE=D.SUPSGCODE AND Z.ZSSUPID=D.SUPID left join INF_SHOP P on Z.ZSSGCODE=P.SGCODE and Z.ZSMFID=P.SHPCODE where 1=1");
 					}
 					int limit = stock.getRows();
 					log.debug("limit: " + limit);
@@ -1043,13 +1050,13 @@ public class SaleSummaryImpl extends BaseManagerImpl implements SaleSummary {
 			try {
 				Stock stock = (Stock) o[0]; 
 				StringBuffer sumSql = null ;
-				
+				String stockTable="YW_ZRSTOCK"+stock.getSgcode();
 				if("3029".equals(user.getSgcode()) && "S".equals(user.getSutype()+"")){
 					sumSql = new StringBuffer(
 					"SELECT cast('合计' as varchar2(30)) SHPCODE,SUM(case when Z.ZSKCSL>=0 then Z.ZSKCSL else 0 end ) ZSKCSL,SUM(case when Z.ZSKCJE>=0 then Z.ZSKCJE else 0 end ) ZSKCJE from YW_ZRSTOCK Z left join INF_SHOP P on Z.ZSSGCODE=P.SGCODE and Z.ZSMFID=P.SHPCODE where 1=1");
 				}else{
 					sumSql = new StringBuffer(
-					"SELECT cast('合计' as varchar2(30)) SHPCODE,SUM(Z.ZSKCSL) ZSKCSL,SUM(Z.ZSKCJE) ZSKCJE from YW_ZRSTOCK Z left join INF_SHOP P on Z.ZSSGCODE=P.SGCODE and Z.ZSMFID=P.SHPCODE where 1=1");
+					"SELECT cast('合计' as varchar2(30)) SHPCODE,SUM(Z.ZSKCSL) ZSKCSL,SUM(Z.ZSKCJE) ZSKCJE from "+stockTable+" Z left join INF_SHOP P on Z.ZSSGCODE=P.SGCODE and Z.ZSMFID=P.SHPCODE where 1=1");
 				}
 				if (!StringUtil.isBlank(stock.getSgcode())) {
 					log.debug("stock.getSgcode(): " + stock.getSgcode());
@@ -1081,7 +1088,7 @@ public class SaleSummaryImpl extends BaseManagerImpl implements SaleSummary {
 				log.debug(lstSumResult);
 				if (lstSumResult != null && lstSumResult.size() > 0) {
 					StringBuffer countSql = new StringBuffer(
-							"select count(*) from YW_ZRSTOCK Z left join INF_SHOP P on Z.ZSSGCODE=P.SGCODE and Z.ZSMFID=P.SHPCODE where 1=1");
+							"select count(*) from "+stockTable+" Z left join INF_SHOP P on Z.ZSSGCODE=P.SGCODE and Z.ZSMFID=P.SHPCODE where 1=1");
 
 					if (!StringUtil.isBlank(stock.getSgcode())) {
 						log.debug("stock.getSgcode(): " + stock.getSgcode());
@@ -1135,7 +1142,7 @@ public class SaleSummaryImpl extends BaseManagerImpl implements SaleSummary {
 							"select P.SHPCODE,P.SHPNAME,(case when Z.ZSKCSL>=0 then Z.ZSKCSL else 0 end)ZSKCSL ,( case when Z.ZSKCJE>=0 then Z.ZSKCJE else 0 end )ZSKCJE,ZSSUPID SSUPID,SUPNAME,to_char(sysdate-1,'yyyy-mm-dd')KCRQ from YW_ZRSTOCK Z LEFT JOIN INF_SUPINFO D ON Z.ZSSGCODE=D.SUPSGCODE AND Z.ZSSUPID=D.SUPID left join INF_SHOP P on Z.ZSSGCODE=P.SGCODE and Z.ZSMFID=P.SHPCODE where 1=1");
 						}else{
 							sql = new StringBuffer(
-							"select P.SHPCODE,P.SHPNAME,Z.ZSKCSL,Z.ZSKCJE,ZSSUPID SSUPID,SUPNAME,to_char(sysdate-1,'yyyy-mm-dd')KCRQ from YW_ZRSTOCK Z LEFT JOIN INF_SUPINFO D ON Z.ZSSGCODE=D.SUPSGCODE AND Z.ZSSUPID=D.SUPID left join INF_SHOP P on Z.ZSSGCODE=P.SGCODE and Z.ZSMFID=P.SHPCODE where 1=1");
+							"select P.SHPCODE,P.SHPNAME,Z.ZSKCSL,Z.ZSKCJE,ZSSUPID SSUPID,SUPNAME,to_char(sysdate-1,'yyyy-mm-dd')KCRQ from "+stockTable+" Z LEFT JOIN INF_SUPINFO D ON Z.ZSSGCODE=D.SUPSGCODE AND Z.ZSSUPID=D.SUPID left join INF_SHOP P on Z.ZSSGCODE=P.SGCODE and Z.ZSMFID=P.SHPCODE where 1=1");
 							
 						}
 					}
@@ -1197,16 +1204,17 @@ public class SaleSummaryImpl extends BaseManagerImpl implements SaleSummary {
 			SaleReport saleReport = (SaleReport) o[0]; // 查询条件
 			boolean flag=saleReport.getGssgcode().equals("3009");
 			boolean flag_3010=saleReport.getGssgcode().equals("3010");
+			String goodssaleTable="YW_GOODSSALE"+saleReport.getGssgcode();
 			StringBuffer sumSql = null;
              if(flag){
      			 sumSql = new StringBuffer(
-    			"select cast('合计' as varchar2(32)) GSRQ,SUM(GSXSSL) GSXSSL,round(SUM(GSHSJJJE),2) GSXSJE,round(SUM(S.GSXSSR),2) GSXSSR,round(SUM(S.GSHSJJJE),2) XSSR,(CASE WHEN SUM(S.GSXSSR) IS NULL OR SUM(S.GSXSSR)=0 THEN '0.00%' ELSE ROUND((SUM(S.GSXSSR)-SUM(S.GSHSJJJE))/SUM(S.GSXSSR)*100,2)||'%' END )MLL FROM YW_GOODSSALE S left join INF_GOODS_JM G on S.GSGDID=G.GDID and S.GSSGCODE=G.GDSGCODE and G.GDSUPID=S.GSSUPID and S.GSMFID=G.GDMFID and S.GSMFID = G.GDMFID where 1 = 1 ");
+    			"select cast('合计' as varchar2(32)) GSRQ,SUM(GSXSSL) GSXSSL,round(SUM(GSHSJJJE),2) GSXSJE,round(SUM(S.GSXSSR),2) GSXSSR,round(SUM(S.GSHSJJJE),2) XSSR,(CASE WHEN SUM(S.GSXSSR) IS NULL OR SUM(S.GSXSSR)=0 THEN '0.00%' ELSE ROUND((SUM(S.GSXSSR)-SUM(S.GSHSJJJE))/SUM(S.GSXSSR)*100,2)||'%' END )MLL FROM "+goodssaleTable+" S left join INF_GOODS_JM G on S.GSGDID=G.GDID and S.GSSGCODE=G.GDSGCODE and G.GDSUPID=S.GSSUPID and S.GSMFID=G.GDMFID and S.GSMFID = G.GDMFID where 1 = 1 ");
              }else if(flag_3010){
             	 sumSql = new StringBuffer(
      			"select cast('合计' as varchar2(32)) GSRQ,SUM(GSXSSL) GSXSSL,round(SUM(GSHSJJJE),2) GSXSJE,round(SUM(S.GSXSSR),2) GSXSSR,round(SUM(S.GSHSJJJE),2) XSSR FROM YW_GOODSSALE_M S left join INF_GOODS G on S.GSGDID=G.GDID and S.GSSGCODE=G.GDSGCODE where 1 = 1 ");
              }else{
             		 sumSql = new StringBuffer(
-         			"select cast('合计' as varchar2(32)) GSRQ,SUM(GSXSSL) GSXSSL,round(SUM(GSHSJJJE),2) GSXSJE,round(SUM(S.GSXSJE),2) GSXSSR,round(SUM(S.GSHSJJJE),2) XSSR,round(SUM(S.GSXSSR),2) XSSR2 ,round(SUM(S.GSVENDREBATE),2) GSVENDREBATE FROM YW_GOODSSALE S left join INF_GOODS G on S.GSGDID=G.GDID and S.GSSGCODE=G.GDSGCODE where 1 = 1 ");
+         			"select cast('合计' as varchar2(32)) GSRQ,SUM(GSXSSL) GSXSSL,round(SUM(GSHSJJJE),2) GSXSJE,round(SUM(S.GSXSJE),2) GSXSSR,round(SUM(S.GSHSJJJE),2) XSSR,round(SUM(S.GSXSSR),2) XSSR2 ,round(SUM(S.GSVENDREBATE),2) GSVENDREBATE FROM "+goodssaleTable+" S left join INF_GOODS G on S.GSGDID=G.GDID and S.GSSGCODE=G.GDSGCODE where 1 = 1 ");
              }
 			if (!StringUtil.isBlank(saleReport.getGssgcode())) {
 				log.debug("saleReport.getGssgcode(): "
@@ -1279,7 +1287,7 @@ public class SaleSummaryImpl extends BaseManagerImpl implements SaleSummary {
 				StringBuffer countSql = null;
               if(flag){
   				 countSql = new StringBuffer(
-				"select count(*) from (SELECT GSSUPID,GSGDID,GSRQ FROM YW_GOODSSALE S left join INF_GOODS_JM G on S.GSGDID=G.GDID and S.GSSGCODE=G.GDSGCODE and G.GDSUPID=S.GSSUPID  and S.GSMFID=G.GDMFID where 1 = 1");
+				"select count(*) from (SELECT GSSUPID,GSGDID,GSRQ FROM "+goodssaleTable+" S left join INF_GOODS_JM G on S.GSGDID=G.GDID and S.GSSGCODE=G.GDSGCODE and G.GDSUPID=S.GSSUPID  and S.GSMFID=G.GDMFID where 1 = 1");
               }else if(flag_3010){
             	  countSql = new StringBuffer(
   				"select count(*) from (SELECT GSSUPID,GSGDID,GSRQ FROM YW_GOODSSALE_M S left join INF_GOODS G on S.GSGDID=G.GDID and S.GSSGCODE=G.GDSGCODE where 1 = 1  and S.GSXSSL!=0 ");            	  
@@ -1288,7 +1296,7 @@ public class SaleSummaryImpl extends BaseManagerImpl implements SaleSummary {
             	  "select count(*) from (SELECT GSSUPID,GSGDID FROM YW_GOODSSALE S left join INF_GOODS G on S.GSGDID=G.GDID and S.GSSGCODE=G.GDSGCODE where 1 = 1 and S.GSXSSL!=0");
               }else{
             	  countSql = new StringBuffer(
-            	  "select count(*) from (SELECT GSSUPID,GSGDID,GSRQ FROM YW_GOODSSALE S left join INF_GOODS G on S.GSGDID=G.GDID and S.GSSGCODE=G.GDSGCODE where 1 = 1 and S.GSXSSL!=0");
+            	  "select count(*) from (SELECT GSSUPID,GSGDID,GSRQ FROM "+goodssaleTable+" S left join INF_GOODS G on S.GSGDID=G.GDID and S.GSSGCODE=G.GDSGCODE where 1 = 1 and S.GSXSSL!=0");
             	  
               }
 				if (!StringUtil.isBlank(saleReport.getGssgcode())) {
@@ -1386,7 +1394,7 @@ public class SaleSummaryImpl extends BaseManagerImpl implements SaleSummary {
 						sql = new StringBuffer(
 								"select to_char(S.GSRQ,'yyyy-MM-dd') as GSRQ,S.GSSUPID,D.SUPNAME,S.GSGDID GDID,G.GDBARCODE,G.GDNAME,G.GDPPNAME,G.GDSPEC,G.GDUNIT,SUM(S.GSXSSL) GSXSSL,"
 								+"SUM(S.GSHSJJJE) GSXSJE,SUM(S.GSXSSR) GSXSSR ,(CASE WHEN SUM(S.GSXSSR) IS NULL OR SUM(S.GSXSSR)=0 THEN '0.00%' ELSE ROUND((SUM(S.GSXSSR)-SUM(S.GSHSJJJE))/SUM(S.GSXSSR)*100,2)||'%' END )MLL "
-								+"from YW_GOODSSALE S LEFT JOIN INF_RELATION_JM D ON S.GSSGCODE=D.SGCODE AND SUBSTR(S.GSSUPID,0,3)=D.SUPID left join INF_GOODS_JM G on S.GSGDID=G.GDID and S.GSSGCODE=G.GDSGCODE and G.GDSUPID=S.GSSUPID AND G.GDMFID=S.GSMFID where 1 = 1");
+								+"from "+goodssaleTable+" S LEFT JOIN INF_RELATION_JM D ON S.GSSGCODE=D.SGCODE AND SUBSTR(S.GSSUPID,0,3)=D.SUPID left join INF_GOODS_JM G on S.GSGDID=G.GDID and S.GSSGCODE=G.GDSGCODE and G.GDSUPID=S.GSSUPID AND G.GDMFID=S.GSMFID where 1 = 1");
 					}else if(flag_3010){
 						sql = new StringBuffer(
 								"select to_char(S.GSRQ,'yyyy-MM-dd') as GSRQ,S.GSSUPID,D.SUPNAME,S.GSGDID GDID,S.GSBARCODE GDBARCODE,G.GDNAME,G.GDPPNAME,G.GDSPEC,G.GDUNIT,SUM(S.GSXSSL) GSXSSL,"
@@ -1407,7 +1415,7 @@ public class SaleSummaryImpl extends BaseManagerImpl implements SaleSummary {
 						sql = new StringBuffer(
 								"select to_char(S.GSRQ,'yyyy-MM-dd') as GSRQ,S.GSSUPID,D.SUPNAME,S.GSGDID AS GDID,G.GDBARCODE,G.GDNAME,G.GDPPNAME,G.GDSPEC,G.GDUNIT,s.temp5,SUM(S.GSXSSL) GSXSSL,"
 								+"SUM(S.GSHSJJJE) GSXSJE,SUM(S.GSXSJE) GSXSSR,SUM(S.GSXSSR) XSSR2,S.TEMP3,SUM(S.TEMP3) XSSR,round(SUM(S.GSVENDREBATE),2) GSVENDREBATE "
-								+"from YW_GOODSSALE S LEFT JOIN INF_SUPINFO D ON S.GSSGCODE=D.SUPSGCODE AND S.GSSUPID=D.SUPID left join INF_GOODS G on S.GSGDID=G.GDID and S.GSSGCODE=G.GDSGCODE where 1 = 1 and S.GSXSSL!=0");
+								+"from "+goodssaleTable+" S LEFT JOIN INF_SUPINFO D ON S.GSSGCODE=D.SUPSGCODE AND S.GSSUPID=D.SUPID left join INF_GOODS G on S.GSGDID=G.GDID and S.GSSGCODE=G.GDSGCODE where 1 = 1 and S.GSXSSL!=0");
 					}
 				}
 				int limit = saleReport.getRows();
@@ -1528,11 +1536,11 @@ public class SaleSummaryImpl extends BaseManagerImpl implements SaleSummary {
 		
 		try {
 				SaleReport saleReport = (SaleReport) o[0]; // 鏌ヨ鏉′欢
-
+				String goodssaleTable="YW_GOODSSALE"+saleReport.getGssgcode();
 				StringBuffer sumSql = null;
 
 				sumSql = new StringBuffer(
-						"select cast('合计' as varchar2(32))  GDID,SUM(GSXSSL) GSXSSL,round(SUM(GSHSJJJE),2) GSXSJE,round(SUM(S.GSXSJE),2) GSXSSR FROM YW_GOODSSALE S  where 1 = 1 and S.GSXSSL!=0 ");
+						"select cast('合计' as varchar2(32))  GDID,SUM(GSXSSL) GSXSSL,round(SUM(GSHSJJJE),2) GSXSJE,round(SUM(S.GSXSJE),2) GSXSSR FROM "+goodssaleTable+" S  where 1 = 1 and S.GSXSSL!=0 ");
 
 				if (!StringUtil.isBlank(saleReport.getGssgcode())) {
 					log.debug("saleReport.getGssgcode(): "
@@ -1601,7 +1609,7 @@ public class SaleSummaryImpl extends BaseManagerImpl implements SaleSummary {
 					StringBuffer countSql = null;
 
 					countSql = new StringBuffer(
-							"select count(*) from ( select G.GDID,G.GDBARCODE,G.GDNAME,G.GDPPNAME,G.GDSPEC,G.GDUNIT,SUM(S.GSXSSL) GSXSSL,SUM(S.GSHSJJJE) GSXSJE,SUM(S.GSXSJE) GSXSSR, D.SUPID SUPID,D.SUPNAME SUPNAME  from YW_GOODSSALE S LEFT JOIN INF_SUPINFO D  ON S.GSSGCODE=D.SUPSGCODE AND S.GSSUPID=D.SUPID left join INF_GOODS G on S.GSGDID=G.GDID and S.GSSGCODE=G.GDSGCODE where 1 = 1 and S.GSXSSL!=0 ");
+							"select count(*) from ( select G.GDID,G.GDBARCODE,G.GDNAME,G.GDPPNAME,G.GDSPEC,G.GDUNIT,SUM(S.GSXSSL) GSXSSL,SUM(S.GSHSJJJE) GSXSJE,SUM(S.GSXSJE) GSXSSR, D.SUPID SUPID,D.SUPNAME SUPNAME  from "+goodssaleTable+" S LEFT JOIN INF_SUPINFO D  ON S.GSSGCODE=D.SUPSGCODE AND S.GSSUPID=D.SUPID left join INF_GOODS G on S.GSGDID=G.GDID and S.GSSGCODE=G.GDSGCODE where 1 = 1 and S.GSXSSL!=0 ");
 
 					if (!StringUtil.isBlank(saleReport.getGssgcode())) {
 						log.debug("saleReport.getGssgcode(): "
@@ -1682,7 +1690,7 @@ public class SaleSummaryImpl extends BaseManagerImpl implements SaleSummary {
 					sql = new StringBuffer(
 							"select G.GDID,G.GDBARCODE,G.GDNAME,G.GDPPNAME,G.GDSPEC,G.GDUNIT,SUM(S.GSXSSL) GSXSSL,"
 									+ "SUM(S.GSHSJJJE) GSXSJE,SUM(S.GSXSJE) GSXSSR,D.SUPID SUPID,D.SUPNAME SUPNAME "
-									+ "from YW_GOODSSALE S LEFT JOIN INF_SUPINFO D ON S.GSSGCODE=D.SUPSGCODE AND S.GSSUPID=D.SUPID left join INF_GOODS G on S.GSGDID=G.GDID and S.GSSGCODE=G.GDSGCODE where 1 = 1 and S.GSXSSL!=0");
+									+ "from "+goodssaleTable+" S LEFT JOIN INF_SUPINFO D ON S.GSSGCODE=D.SUPSGCODE AND S.GSSUPID=D.SUPID left join INF_GOODS G on S.GSGDID=G.GDID and S.GSSGCODE=G.GDSGCODE where 1 = 1 and S.GSXSSL!=0");
 
 					int limit = saleReport.getRows();
 					log.debug("limit: " + limit);
@@ -2144,6 +2152,7 @@ public class SaleSummaryImpl extends BaseManagerImpl implements SaleSummary {
 		} else if ("getSaleCategory".equals(actionType)) {
 			try {
 				SaleReport saleReport = (SaleReport) o[0];
+				String goodssaleTable="YW_GOODSSALE"+saleReport.getGssgcode();
 				boolean flag=saleReport.getGssgcode().equals("3009");
 				boolean flag_3010=saleReport.getGssgcode().equals("3010");
 				boolean flag_3018=saleReport.getGssgcode().equals("3018");
@@ -2151,7 +2160,7 @@ public class SaleSummaryImpl extends BaseManagerImpl implements SaleSummary {
                  if(flag){
                 	  sumSql = new StringBuffer(
                 			 "SELECT cast('合计' as varchar2(30)) GCID,SUM(GSXSSL) GSXSSL,round(SUM(S.GSHSJJJE),2) GSHSJJJE ,round(SUM(S.GSXSJE),2) GSXSSR ,(CASE WHEN SUM(S.GSXSJE) IS NULL OR SUM(S.GSXSJE)=0 THEN '0.00%' ELSE ROUND((SUM(S.GSXSJE)-SUM(S.GSHSJJJE))/SUM(S.GSXSJE)*100,2)||'%' END) MLL "
-                			 +"from YW_GOODSSALE S left join INF_GOODS_JM G on S.GSGDID = G.GDID and S.GSSGCODE = G.GDSGCODE  and G.GDSUPID=S.GSSUPID and G.GDMFID=S.GSMFID left join INF_GOODSCAT_JM C on G.GDCATID = C.GCID and G.GDSGCODE = C.GCSGCODE AND G.GDSUPID=C.GCSUPID and G.GDMFID=C.GCMFID where 1 = 1");
+                			 +"from "+goodssaleTable+" S left join INF_GOODS_JM G on S.GSGDID = G.GDID and S.GSSGCODE = G.GDSGCODE  and G.GDSUPID=S.GSSUPID and G.GDMFID=S.GSMFID left join INF_GOODSCAT_JM C on G.GDCATID = C.GCID and G.GDSGCODE = C.GCSGCODE AND G.GDSUPID=C.GCSUPID and G.GDMFID=C.GCMFID where 1 = 1");
                 	 
                  }else if("3006".equals(saleReport.getGssgcode())){
                 	 sumSql = new StringBuffer(
@@ -2164,7 +2173,7 @@ public class SaleSummaryImpl extends BaseManagerImpl implements SaleSummary {
                  }else{
                 	 sumSql = new StringBuffer(
                 			 "SELECT cast('合计' as varchar2(30)) GCID,SUM(GSXSSL) GSXSSL,round(SUM(S.GSXSJE),2) GSXSSR,round(SUM(S.GSHSJJJE),2) GSHSJJJE ,round(SUM(S.GSXSSR),2) XSSR,round(SUM(S.GSVENDREBATE),2) GSVENDREBATE "
-                			 +"from YW_GOODSSALE S left join INF_GOODS G on S.GSGDID = G.GDID and S.GSSGCODE = G.GDSGCODE left join INF_GOODSCAT C on G.GDCATID = C.GCID and G.GDSGCODE = C.GCSGCODE where 1 = 1");
+                			 +"from "+goodssaleTable+" S left join INF_GOODS G on S.GSGDID = G.GDID and S.GSSGCODE = G.GDSGCODE left join INF_GOODSCAT C on G.GDCATID = C.GCID and G.GDSGCODE = C.GCSGCODE where 1 = 1");
                 	 
                  }
 				if (!StringUtil.isBlank(saleReport.getGssgcode())) {
@@ -2240,7 +2249,7 @@ public class SaleSummaryImpl extends BaseManagerImpl implements SaleSummary {
 					StringBuffer countSql = null;
 					if(flag){
 						 countSql = new StringBuffer(
-						"select count(*) from (SELECT C.GCID,C.GCNAME, S.GSSUPID,D.SUPNAME from YW_GOODSSALE S LEFT JOIN INF_RELATION_JM D ON S.GSSGCODE = D.SGCODE AND SUBSTR(S.GSSUPID, 0, 3) = D.SUPID left join INF_GOODS_JM G on S.GSGDID=G.GDID and S.GSSGCODE=G.GDSGCODE AND G.GDSUPID=S.GSSUPID and G.GDMFID=S.GSMFID left join INF_GOODSCAT_JM C on G.GDCATID=C.GCID and G.GDSGCODE=C.GCSGCODE AND G.GDSUPID=C.GCSUPID and G.GDMFID=C.GCMFID where 1=1");
+						"select count(*) from (SELECT C.GCID,C.GCNAME, S.GSSUPID,D.SUPNAME from "+goodssaleTable+" S LEFT JOIN INF_RELATION_JM D ON S.GSSGCODE = D.SGCODE AND SUBSTR(S.GSSUPID, 0, 3) = D.SUPID left join INF_GOODS_JM G on S.GSGDID=G.GDID and S.GSSGCODE=G.GDSGCODE AND G.GDSUPID=S.GSSUPID and G.GDMFID=S.GSMFID left join INF_GOODSCAT_JM C on G.GDCATID=C.GCID and G.GDSGCODE=C.GCSGCODE AND G.GDSUPID=C.GCSUPID and G.GDMFID=C.GCMFID where 1=1");
 						
 					}else if("3006".equals(saleReport.getGssgcode())){
 						countSql = new StringBuffer(
@@ -2253,7 +2262,7 @@ public class SaleSummaryImpl extends BaseManagerImpl implements SaleSummary {
 						"select count(*) from (SELECT GCID,GSSUPID from YW_GOODSSALE_M S LEFT JOIN INF_SUPINFO D ON S.GSSGCODE=D.SUPSGCODE AND S.GSSUPID=D.SUPID left join INF_GOODS G on S.GSGDID=G.GDID and S.GSSGCODE=G.GDSGCODE left join INF_GOODSCAT C on G.GDCATID=C.GCID and G.GDSGCODE=C.GCSGCODE where 1=1");
 					}else{
 						countSql = new StringBuffer(
-						"select count(*) from (SELECT GCID,GSSUPID from YW_GOODSSALE S LEFT JOIN INF_SUPINFO D ON S.GSSGCODE=D.SUPSGCODE AND S.GSSUPID=D.SUPID left join INF_GOODS G on S.GSGDID=G.GDID and S.GSSGCODE=G.GDSGCODE left join INF_GOODSCAT C on G.GDCATID=C.GCID and G.GDSGCODE=C.GCSGCODE where 1=1");
+						"select count(*) from (SELECT GCID,GSSUPID from "+goodssaleTable+" S LEFT JOIN INF_SUPINFO D ON S.GSSGCODE=D.SUPSGCODE AND S.GSSUPID=D.SUPID left join INF_GOODS G on S.GSGDID=G.GDID and S.GSSGCODE=G.GDSGCODE left join INF_GOODSCAT C on G.GDCATID=C.GCID and G.GDSGCODE=C.GCSGCODE where 1=1");
 						
 					}
 					if (!StringUtil.isBlank(saleReport.getGssgcode())) {
@@ -2344,7 +2353,7 @@ public class SaleSummaryImpl extends BaseManagerImpl implements SaleSummary {
 					if(flag){
 						 sql = new StringBuffer(
 								"select C.GCID,C.GCNAME,SUM(S.GSXSSL) GSXSSL,sum(S.GSXSSR)GSXSSR,"
-								+"SUM(S.GSHSJJJE) GSHSJJJE,(CASE WHEN SUM(S.GSXSSR) IS NULL OR SUM(S.GSXSSR)=0 THEN '0.00%' ELSE ROUND((SUM(S.GSXSSR)-SUM(S.GSHSJJJE))/SUM(S.GSXSSR)*100,2)||'%' END)MLL,S.GSSUPID,D.SUPNAME from YW_GOODSSALE S "
+								+"SUM(S.GSHSJJJE) GSHSJJJE,(CASE WHEN SUM(S.GSXSSR) IS NULL OR SUM(S.GSXSSR)=0 THEN '0.00%' ELSE ROUND((SUM(S.GSXSSR)-SUM(S.GSHSJJJE))/SUM(S.GSXSSR)*100,2)||'%' END)MLL,S.GSSUPID,D.SUPNAME from "+goodssaleTable+" S "
 								+"LEFT JOIN INF_relation_jm  D ON S.GSSGCODE=D.SGCODE AND SUBSTR(S.GSSUPID,0,3)=D.SUPID left join INF_GOODS_JM G on S.GSGDID=G.GDID "
 								+"and S.GSSGCODE=G.GDSGCODE and G.GDSUPID=S.GSSUPID and G.GDMFID=S.GSMFID left join INF_GOODSCAT_JM C on G.GDCATID=C.GCID and G.GDSGCODE=C.GCSGCODE AND G.GDSUPID=C.GCSUPID and G.GDMFID=C.GCMFID where 1=1");
 						
@@ -2370,7 +2379,7 @@ public class SaleSummaryImpl extends BaseManagerImpl implements SaleSummary {
 					}else{
 						sql = new StringBuffer(
 								"select C.GCID,C.GCNAME,SUM(S.GSXSSL) GSXSSL,sum(S.GSXSJE)GSXSSR,"
-								+"SUM(S.GSHSJJJE) GSHSJJJE,SUM(S.GSXSSR) XSSR,round(SUM(S.GSVENDREBATE),2) GSVENDREBATE,S.GSSUPID,D.SUPNAME ,S.TEMP5 from YW_GOODSSALE S "
+								+"SUM(S.GSHSJJJE) GSHSJJJE,SUM(S.GSXSSR) XSSR,round(SUM(S.GSVENDREBATE),2) GSVENDREBATE,S.GSSUPID,D.SUPNAME ,S.TEMP5 from "+goodssaleTable+" S "
 								+"LEFT JOIN INF_SUPINFO D ON S.GSSGCODE=D.SUPSGCODE AND S.GSSUPID=D.SUPID left join INF_GOODS G on S.GSGDID=G.GDID "
 								+"and S.GSSGCODE=G.GDSGCODE left join INF_GOODSCAT C on G.GDCATID=C.GCID and G.GDSGCODE=C.GCSGCODE where 1=1 and S.GSXSSL!=0");
 						
@@ -2473,7 +2482,8 @@ public class SaleSummaryImpl extends BaseManagerImpl implements SaleSummary {
 		}else if ("getSaleCategoryDetail".equals(actionType)) {
 			try {
 				SaleReport saleReport = (SaleReport) o[0];
-				StringBuffer sumSql =new StringBuffer("SELECT CAST('合计' AS VARCHAR2(30)) GDID,SUM(S.GSXSSL)GSXSSL,SUM(S.GSXSSR)GSXSSR,SUM(GSHSJJJE)GSHSJJJE,(CASE WHEN SUM(S.GSXSSR) IS NULL OR SUM(S.GSXSSR)=0 THEN '0.00%' ELSE ROUND((SUM(S.GSXSSR)-SUM(S.GSHSJJJE))/SUM(S.GSXSSR)*100,2)||'%' END) MLL FROM YW_GOODSSALE S LEFT JOIN INF_RELATION_JM D ON S.GSSGCODE = D.SGCODE AND SUBSTR(S.GSSUPID, 0, 3) = D.SUPID LEFT JOIN INF_GOODS_JM G ON S.GSGDID = G.GDID  AND S.GSSGCODE = G.GDSGCODE   AND G.GDSUPID = S.GSSUPID  AND G.GDMFID = S.GSMFID LEFT JOIN INF_GOODSCAT_JM C  ON G.GDCATID = C.GCID AND G.GDSGCODE = C.GCSGCODE AND G.GDSUPID = C.GCSUPID  AND G.GDMFID = C.GCMFID WHERE 1=1"); 
+				String goodssaleTable="YW_GOODSSALE"+saleReport.getGssgcode();
+				StringBuffer sumSql =new StringBuffer("SELECT CAST('合计' AS VARCHAR2(30)) GDID,SUM(S.GSXSSL)GSXSSL,SUM(S.GSXSSR)GSXSSR,SUM(GSHSJJJE)GSHSJJJE,(CASE WHEN SUM(S.GSXSSR) IS NULL OR SUM(S.GSXSSR)=0 THEN '0.00%' ELSE ROUND((SUM(S.GSXSSR)-SUM(S.GSHSJJJE))/SUM(S.GSXSSR)*100,2)||'%' END) MLL FROM "+goodssaleTable+" S LEFT JOIN INF_RELATION_JM D ON S.GSSGCODE = D.SGCODE AND SUBSTR(S.GSSUPID, 0, 3) = D.SUPID LEFT JOIN INF_GOODS_JM G ON S.GSGDID = G.GDID  AND S.GSSGCODE = G.GDSGCODE   AND G.GDSUPID = S.GSSUPID  AND G.GDMFID = S.GSMFID LEFT JOIN INF_GOODSCAT_JM C  ON G.GDCATID = C.GCID AND G.GDSGCODE = C.GCSGCODE AND G.GDSUPID = C.GCSUPID  AND G.GDMFID = C.GCMFID WHERE 1=1"); 
                   
 				if (!StringUtil.isBlank(saleReport.getGssgcode())) {
 					log.debug("saleReport.getGssgcode(): "
@@ -4617,9 +4627,10 @@ public class SaleSummaryImpl extends BaseManagerImpl implements SaleSummary {
 	@Override
 	public ReturnObject getResult(Object o) {
 		ReturnObject result = new ReturnObject();
-
+		
 		try {
 			SaleReport saleReport = (SaleReport) o; 
+			String goodssaleTable="YW_GOODSSALE"+saleReport.getGssgcode();
 			boolean flag_3010=saleReport.getGssgcode().equals("3010");
 			StringBuffer sumSql = null;
 			if(flag_3010){
@@ -4630,7 +4641,7 @@ public class SaleSummaryImpl extends BaseManagerImpl implements SaleSummary {
 			}else{
 				sumSql = new StringBuffer(
 						"SELECT cast('合计' as varchar2(32)) SHPCODE,SUM(GSXSSL) GSXSSL,round(SUM(GSXSJE),2) GSXSJE,round(SUM(GSHSJJJE),2) AS GSHSJJJE,"
-						+"SUM(S.TEMP2) GSXSSR ,round(SUM(GSXSSR), 2) AS XSSR,round(sum(gsvendrebate),2) as gsvendrebate FROM YW_GOODSSALE S LEFT JOIN INF_SHOP P ON S.GSMFID = P.SHPCODE "
+						+"SUM(S.TEMP2) GSXSSR ,round(SUM(GSXSSR), 2) AS XSSR,round(sum(gsvendrebate),2) as gsvendrebate FROM "+goodssaleTable+" S LEFT JOIN INF_SHOP P ON S.GSMFID = P.SHPCODE "
 						+"AND S.GSSGCODE = P.SGCODE WHERE 1 = 1");
 			}
 			if (!StringUtil.isBlank(saleReport.getGssgcode())) {
@@ -4691,7 +4702,7 @@ public class SaleSummaryImpl extends BaseManagerImpl implements SaleSummary {
 					"select count(*) from (select GSMFID from YW_GOODSSALE S LEFT JOIN INF_SHOP P ON S.GSMFID=P.SHPCODE AND S.GSSGCODE = P.SGCODE  WHERE 1=1");
 				}else{
                 	countSql = new StringBuffer(
-					"select count(*) from (select GSMFID,S.GSSUPID from YW_GOODSSALE S LEFT JOIN INF_SHOP P ON S.GSMFID=P.SHPCODE AND S.GSSGCODE = P.SGCODE  WHERE 1=1");
+					"select count(*) from (select GSMFID,S.GSSUPID from "+goodssaleTable+" S LEFT JOIN INF_SHOP P ON S.GSMFID=P.SHPCODE AND S.GSSGCODE = P.SGCODE  WHERE 1=1");
                 }
 				if (!StringUtil.isBlank(saleReport.getGssgcode())) {
 					log.debug("saleReport.getGssgcode(): "
@@ -4771,7 +4782,7 @@ public class SaleSummaryImpl extends BaseManagerImpl implements SaleSummary {
 					"SELECT P.SHPCODE,P.SHPNAME,SUM(S.GSXSSL) AS GSXSSL,round(SUM( S.GSXSJE),2) GSXSJE,round(SUM(S.GSHSJJJE),2) AS GSHSJJJE,SUM(S.TEMP2) AS GSXSSR FROM YW_GOODSSALE S LEFT JOIN INF_SHOP P ON S.GSMFID=P.SHPCODE AND S.GSSGCODE = P.SGCODE LEFT JOIN INF_SUPINFO D ON S.GSSGCODE=D.SUPSGCODE AND S.GSSUPID=D.SUPID  WHERE 1=1 ");
 				}else{
 					sql=new StringBuffer(
-					"SELECT P.SHPCODE,S.GSSUPID,D.SUPNAME,P.SHPNAME,SUM(S.GSXSSL) AS GSXSSL,round(SUM( S.GSXSJE),2) GSXSJE,round(SUM(S.GSHSJJJE),2) AS GSHSJJJE,round(SUM(S.GSXSSR), 2) AS XSSR,SUM(S.TEMP2) AS GSXSSR,sum(s.gsvendrebate) as gsvendrebate FROM YW_GOODSSALE S LEFT JOIN INF_SHOP P ON S.GSMFID=P.SHPCODE AND S.GSSGCODE = P.SGCODE LEFT JOIN INF_SUPINFO D ON S.GSSGCODE=D.SUPSGCODE AND S.GSSUPID=D.SUPID  WHERE 1=1 ");
+					"SELECT P.SHPCODE,S.GSSUPID,D.SUPNAME,P.SHPNAME,SUM(S.GSXSSL) AS GSXSSL,round(SUM( S.GSXSJE),2) GSXSJE,round(SUM(S.GSHSJJJE),2) AS GSHSJJJE,round(SUM(S.GSXSSR), 2) AS XSSR,SUM(S.TEMP2) AS GSXSSR,sum(s.gsvendrebate) as gsvendrebate FROM "+goodssaleTable+" S LEFT JOIN INF_SHOP P ON S.GSMFID=P.SHPCODE AND S.GSSGCODE = P.SGCODE LEFT JOIN INF_SUPINFO D ON S.GSSGCODE=D.SUPSGCODE AND S.GSSUPID=D.SUPID  WHERE 1=1 ");
 				}
 				int limit = saleReport.getRows();
 				log.debug("limit: " + limit);
