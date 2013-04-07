@@ -43,8 +43,6 @@ public class SaleSummaryImpl extends BaseManagerImpl implements SaleSummary {
 	public ReturnObject ExecOther(String actionType, Object[] o) {
 
 		ReturnObject result = new ReturnObject();
-		
-		
 		if("getSaleSum".equals(actionType)){
 			SaleReport saleReport = (SaleReport) o[0]; // 查询条件
 			

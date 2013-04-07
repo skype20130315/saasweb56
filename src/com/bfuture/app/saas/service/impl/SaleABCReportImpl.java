@@ -24,7 +24,6 @@ public class SaleABCReportImpl extends BaseManagerImpl implements BaseManager {
 	public ReturnObject getResult(Object o) {
 		log.info("SaleABCReportImpl.getResult()");
 		ReturnObject result = new ReturnObject();
-		
 		try{
 			YwGoodssale goodsale = (YwGoodssale)o;	
 			String goodssaleTable="YW_GOODSSALE"+goodsale.getGssgcode();

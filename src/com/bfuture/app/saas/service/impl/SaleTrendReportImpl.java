@@ -42,12 +42,6 @@ public class SaleTrendReportImpl extends BaseManagerImpl implements BaseManager 
 				}else{
 					chartSql = new StringBuffer( "SELECT SYSDATE RQ,TO_CHAR(T.GSRQ,'yyyy-MM-DD') GSRQ,SUM(GSXSSL) GSXSSL FROM "+goodssaleTable+" T WHERE 1 = 1  " );
 				}
-				/*
-				if(goodsale.getGssgcode().equals("4006")){
-					
-				}else{
-					chartSql = new StringBuffer( "SELECT SYSDATE RQ,TO_CHAR(T.GSRQ,'yyyy-MM-DD') GSRQ,SUM(GSXSSR) GSXSSR FROM YW_GOODSSALE T WHERE 1 = 1  " );
-				}*/
 				if( !StringUtil.isBlank( goodsale.getGssupid() ) ){
 					if(goodsale.getGssgcode().equals("3009")){
 						chartSql.append( " and SUBSTR(T.GSSUPID,0,3) = '" ).append( goodsale.getGssupid() ).append("'");
