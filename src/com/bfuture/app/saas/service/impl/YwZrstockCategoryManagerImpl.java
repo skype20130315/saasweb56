@@ -77,7 +77,7 @@ public class YwZrstockCategoryManagerImpl extends BaseManagerImpl implements YwZ
 			/*分页查询*/
 			int limit = stock.getRows();
 			int start = (stock.getPage() - 1) * stock.getRows();
-			whereStr.append(" group by P.SHPCODE,P.SHPNAME,G.GDCATID,G.GDCATNAME,G.GDSPEC,G.GDUNIT,S.SUPID,S.SUPNAME ");
+			whereStr.append(" group by P.SHPCODE,P.SHPNAME,G.GDID,G.GDNAME,G.GDBARCODE,G.GDCATID,G.GDCATNAME,G.GDSPEC,G.GDUNIT,S.SUPID,S.SUPNAME ");
 			if( stock.getOrder() != null && stock.getSort() != null ){
 				whereStr.append( " order by " ).append( stock.getSort() ).append( " " ).append( stock.getOrder() );
 			}
