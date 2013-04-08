@@ -6,7 +6,7 @@
 <head>
 <meta http-equiv="x-ua-compatible" content="ie=8"/ >
 <meta http-equiv="Content-Type" content="text/html; charset=GBK">
-<title>ÉÌÆ·¿â´æÀà±ğÃ÷Ï¸²éÑ¯</title>
+<title>å•†å“åº“å­˜ç±»åˆ«æ˜ç»†æŸ¥è¯¢</title>
 	<%
 		Object obj = session.getAttribute( "LoginUser" );
 		if( obj == null ){
@@ -24,7 +24,7 @@ a:hover {
 </style>
 <script type="text/javascript">
 
-	   //»ñÈ¡ËùÓĞÃÅµêĞÅÏ¢
+	   //è·å–æ‰€æœ‰é—¨åº—ä¿¡æ¯
 		function loadAllShop( list ){
 			if( $(list).attr('isLoad') == undefined ){
 				$.post( 'JsonServlet',				
@@ -43,14 +43,14 @@ a:hover {
 							
 	                    if(data.returnCode == '1' ){
 	                    	 if( data.rows != undefined && data.rows.length > 0 ){	                    	 	
-	                    	 	$.each( data.rows, function(i, n) {    // Ñ­»·Ô­ÁĞ±íÖĞÑ¡ÖĞµÄÖµ£¬ÒÀ´ÎÌí¼Óµ½Ä¿±êÁĞ±íÖĞ  
+	                    	 	$.each( data.rows, function(i, n) {    // å¾ªç¯åŸåˆ—è¡¨ä¸­é€‰ä¸­çš„å€¼ï¼Œä¾æ¬¡æ·»åŠ åˆ°ç›®æ ‡åˆ—è¡¨ä¸­  
 						            var html = "<option value='" + n.SHPCODE + "'>" + n.SHPNAME + "</option>";  
 						            $(list).append(html);  
 						        });						        
 	                    	 }	                    	 
 	                    	 $(list).attr('isLoad' , true );
 	                    }else{ 
-	                        $.messager.alert('ÌáÊ¾','»ñÈ¡ÃÅµêĞÅÏ¢Ê§°Ü!<br>Ô­Òò£º' + data.returnInfo,'error');
+	                        $.messager.alert('æç¤º','è·å–é—¨åº—ä¿¡æ¯å¤±è´¥!<br>åŸå› ï¼š' + data.returnInfo,'error');
 	                    } 
 	            	},
 	            	'json'
@@ -71,31 +71,32 @@ a:hover {
 				singleSelect : true,
 				fitColumns:false,
 				showFooter:true,	
-				loadMsg:'¼ÓÔØÊı¾İ...',				
+				loadMsg:'åŠ è½½æ•°æ®...',				
 				columns:[[ 
-					{field:'ZSGXTIME',title:'¿â´æÍ³¼ÆÈÕÆÚ',width:80,align:'center',sortable:true,
+					{field:'ZSGXTIME',title:'åº“å­˜ç»Ÿè®¡æ—¥æœŸ',width:80,align:'center',sortable:true,
 						formatter:function(value,rec){
-							if( value != null && value != undefined && value != 'ºÏ¼Æ£º' )
+							if( value != null && value != undefined && value != 'åˆè®¡ï¼š' )
 								return new Date(value.time).format('yyyy-MM-dd');
 								else 
 								return value;
 						}
 					},
-					{field:'SHPCODE',title:'ÃÅµê±àºÅ',width:60,align:'center',sortable:true},
-					{field:'SHPNAME',title:'ÃÅµêÃû³Æ',width:60,align:'center',sortable:true},
-					{field:'GDCATID',title:'Àà±ğ±àÂë',width:60,align:'center',sortable:true},
-					{field:'GDCATNAME',title:'Àà±ğÃû³Æ',width:80,align:'center',sortable:true},
-					{field:'GDID',title:'ÉÌÆ·±àÂë',width:60,align:'center',sortable:true},
-					{field:'GDNAME',title:'ÉÌÆ·Ãû³Æ',width:80,align:'center',sortable:true},				
-					{field:'ZSKCSL',title:'¿â´æÊıÁ¿',width:55,align:'center',sortable:true},
-					{field:'ZSKCJE',title:'¿â´æ½ğ¶î',width:150,align:'center',sortable:true}
+					{field:'SHPCODE',title:'é—¨åº—ç¼–å·',width:60,align:'center',sortable:true},
+					{field:'SHPNAME',title:'é—¨åº—åç§°',width:60,align:'center',sortable:true},
+					{field:'GDCATID',title:'ç±»åˆ«ç¼–ç ',width:60,align:'center',sortable:true},
+					{field:'GDCATNAME',title:'ç±»åˆ«åç§°',width:80,align:'center',sortable:true},
+					{field:'GDID',title:'å•†å“ç¼–ç ',width:60,align:'center',sortable:true},
+					{field:'GDBARCODE',title:'å•†å“æ¡ç ',width:60,align:'center',sortable:true},
+					{field:'GDNAME',title:'å•†å“åç§°',width:80,align:'center',sortable:true},				
+					{field:'ZSKCSL',title:'åº“å­˜æ•°é‡',width:55,align:'center',sortable:true},
+					{field:'ZSKCJE',title:'åº“å­˜é‡‘é¢',width:150,align:'center',sortable:true}
 					<%if("L".equals(suType)){%>
-					,{field:'SUPID',title:'¹©Ó¦ÉÌ±àÂë',width:80,align:'center',sortable:true},	
-					{field:'SUPNAME',title:'¹©Ó¦ÉÌÃû³Æ',width:150,align:'center',sortable:true}
+					,{field:'SUPID',title:'ä¾›åº”å•†ç¼–ç ',width:80,align:'center',sortable:true},	
+					{field:'SUPNAME',title:'ä¾›åº”å•†åç§°',width:150,align:'center',sortable:true}
 					<%}%>
 				]],
 				toolbar:[{
-					text:'µ¼³öExcel',
+					text:'å¯¼å‡ºExcel',
 					iconCls:'icon-redo',
 					handler:function(){
 						exportExcel();
@@ -105,7 +106,7 @@ a:hover {
 				rownumbers:true
 			});
 			//
-			 //Èç¹ûÊÇÁãÊÛÉÌ£¬¾ÍÏÔÊ¾¹©Ó¦ÉÌÊäÈë¿ò
+			 //å¦‚æœæ˜¯é›¶å”®å•†ï¼Œå°±æ˜¾ç¤ºä¾›åº”å•†è¾“å…¥æ¡†
 			if(User.sutype == 'L'){
 				$("#zssupidDiv").show();
 			}else{
@@ -114,7 +115,7 @@ a:hover {
 		});		
 		
 		function reloadgrid ()  {
-		//¸ù¾İÓÃ»§ÊÇ¹©Ó¦ÉÌ»¹ÊÇÁãÊÛÉÌ£¬»ñÈ¡¹©Ó¦ÉÌ±àÂë
+		//æ ¹æ®ç”¨æˆ·æ˜¯ä¾›åº”å•†è¿˜æ˜¯é›¶å”®å•†ï¼Œè·å–ä¾›åº”å•†ç¼–ç 
     		var supcode = '';
 			if(User.sutype == 'L'){
 				supcode = $('#supcode').val();
@@ -129,7 +130,7 @@ a:hover {
 						ACTION_CLASS : 'com.bfuture.app.saas.model.report.Stock',
 						ACTION_MANAGER : 'ywZrstockCategory',		 
 						optType : 'query',
-						optContent : '×òÈÕ¿â´æÀà±ğÃ÷Ï¸²éÑ¯',		 
+						optContent : 'æ˜¨æ—¥åº“å­˜ç±»åˆ«æ˜ç»†æŸ¥è¯¢',		 
 						list:[{
 						 sgcode :User.sgcode,
 						 supcode : supcode,
@@ -150,7 +151,7 @@ a:hover {
 			
     	}
     	function exportExcel(){
-			//¸ù¾İÓÃ»§ÊÇ¹©Ó¦ÉÌ»¹ÊÇÁãÊÛÉÌ£¬»ñÈ¡¹©Ó¦ÉÌ±àÂë
+			//æ ¹æ®ç”¨æˆ·æ˜¯ä¾›åº”å•†è¿˜æ˜¯é›¶å”®å•†ï¼Œè·å–ä¾›åº”å•†ç¼–ç 
     		var supcode = '';
 			if(User.sutype == 'L'){
 				supcode = $('#supcode').val();
@@ -168,12 +169,12 @@ a:hover {
 									exportExcel : true,
 									<%if("L".equalsIgnoreCase( currUser.getSutype().toString()) ){%>
 									enTitle: ['SHPCODE','SHPNAME','GDID','GDNAME','GDCATID','GDCATNAME','GDSPEC','GDUNIT','ZSKCSL','ZSKCJE','SUPID','SUPNAME' ],
-									cnTitle: ['ÃÅµê±àºÅ','ÃÅµêÃû³Æ','ÉÌÆ·±àºÅ','ÉÌÆ·Ãû³Æ','Àà±ğ±àÂë','Àà±ğÃû³Æ','¹æ¸ñ','µ¥Î»','¿â´æÊıÁ¿','¿â´æ½ğ¶î(²»º¬Ë°)','¹©Ó¦ÉÌ±àÂë','¹©Ó¦ÉÌÃû³Æ'],
+									cnTitle: ['é—¨åº—ç¼–å·','é—¨åº—åç§°','å•†å“ç¼–å·','å•†å“åç§°','ç±»åˆ«ç¼–ç ','ç±»åˆ«åç§°','è§„æ ¼','å•ä½','åº“å­˜æ•°é‡','åº“å­˜é‡‘é¢(ä¸å«ç¨)','ä¾›åº”å•†ç¼–ç ','ä¾›åº”å•†åç§°'],
 									<%}else{%>
 									enTitle: ['SHPCODE','SHPNAME','GDID','GDNAME','GDCATID','GDCATNAME','GDSPEC','GDUNIT','ZSKCSL','ZSKCJE' ],
-									cnTitle: ['ÃÅµê±àºÅ','ÃÅµêÃû³Æ','ÉÌÆ·±àºÅ','ÉÌÆ·Ãû³Æ','Àà±ğ±àÂë','Àà±ğÃû³Æ','¹æ¸ñ','µ¥Î»','¿â´æÊıÁ¿','¿â´æ½ğ¶î(²»º¬Ë°)'],
+									cnTitle: ['é—¨åº—ç¼–å·','é—¨åº—åç§°','å•†å“ç¼–å·','å•†å“åç§°','ç±»åˆ«ç¼–ç ','ç±»åˆ«åç§°','è§„æ ¼','å•ä½','åº“å­˜æ•°é‡','åº“å­˜é‡‘é¢(ä¸å«ç¨)'],
 									<%}%>
-									sheetTitle: '×òÈÕ¿â´æÀà±ğÃ÷Ï¸²éÑ¯',
+									sheetTitle: 'æ˜¨æ—¥åº“å­˜ç±»åˆ«æ˜ç»†æŸ¥è¯¢',
 									sgcode : User.sgcode,
 									supcode : supcode,
 									zsmfid : $('#zsmfid').attr('value'),
@@ -187,7 +188,7 @@ a:hover {
 	                    if(data.returnCode == '1' ){
 	                    	location.href = data.returnInfo;	                    	 
 	                    }else{ 
-	                        $.messager.alert('ÌáÊ¾','µ¼³öExcelÊ§°Ü!<br>Ô­Òò£º' + data.returnInfo,'error');
+	                        $.messager.alert('æç¤º','å¯¼å‡ºExcelå¤±è´¥!<br>åŸå› ï¼š' + data.returnInfo,'error');
 	                    } 
 	            	},
 	            	'json'
@@ -204,25 +205,25 @@ a:hover {
 </head>
 <body>
 <center>
-<!-- ---------- ²éÑ¯Ìõ¼şÊäÈëÇø¿ªÊ¼ ---------- -->
+<!-- ---------- æŸ¥è¯¢æ¡ä»¶è¾“å…¥åŒºå¼€å§‹ ---------- -->
 <table width="900"
 	style="line-height: 20px; text-align: left; border: none; font-size: 12px;">
 	<tr>
-		<td colspan="4" align="left" style="border: none; color: #4574a0;">×òÈÕ¿â´æÀà±ğÃ÷Ï¸²éÑ¯</td>
+		<td colspan="4" align="left" style="border: none; color: #4574a0;">æ˜¨æ—¥åº“å­˜ç±»åˆ«æ˜ç»†æŸ¥è¯¢</td>
 	</tr>
 	<tr>
-		<td width="300" style="border: none;">ÃÅ&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;µê£º
+		<td width="300" style="border: none;">é—¨&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;åº—ï¼š
 			<select style="width: 155px;" name='zsmfid' id="zsmfid" size='1'>
-				<option value=''>ËùÓĞÃÅµê</option>
+				<option value=''>æ‰€æœ‰é—¨åº—</option>
 			</select>
 		</td>
-		<td width="300" style="border: none;">Àà±ğ±àÂë: <input type="text" id="gdcatid" name="gdcatid" value="" size="20"/></td>
-		<td width="300" style="border: none;">Àà±ğÃû³Æ£º<input type="text" id="gdcatname" name="gdcatname" value="" size="20"/></td>
+		<td width="300" style="border: none;">ç±»åˆ«ç¼–ç : <input type="text" id="gdcatid" name="gdcatid" value="" size="20"/></td>
+		<td width="300" style="border: none;">ç±»åˆ«åç§°ï¼š<input type="text" id="gdcatname" name="gdcatname" value="" size="20"/></td>
 	</tr>
 
 	<tr>
 		<td width="300" style="border: none;">
-			<div id="zssupidDiv" style="">¹©Ó¦ÉÌ±àÂë£º<input type="text" id="supcode" name="supcode" value="" size="20" /></div>
+			<div id="zssupidDiv" style="">ä¾›åº”å•†ç¼–ç ï¼š<input type="text" id="supcode" name="supcode" value="" size="20" /></div>
 		</td>
 		<td style="border: none;"></td>
 		<td style="border: none;"><input type="hidden" id="zsgdid" name="zsgdid" value="" /></td>
@@ -234,7 +235,7 @@ a:hover {
 	</tr>
 	<tr>
 		<td colspan="4">
-			<!-- table ÖĞÏÔÊ¾ÁĞ±íµÄĞÅÏ¢ -->
+			<!-- table ä¸­æ˜¾ç¤ºåˆ—è¡¨çš„ä¿¡æ¯ -->
 			<div id="saledatagrid" style="display: none;">
 				<table id="stockCategory"></table>
 			</div>
@@ -244,7 +245,7 @@ a:hover {
 </center>
 </body>
 <script type="text/javascript">
-// ¼ÓÔØÃÅµê
+// åŠ è½½é—¨åº—
 var obj = document.getElementById("zsmfid");
 loadAllShop(obj);
 </script>
