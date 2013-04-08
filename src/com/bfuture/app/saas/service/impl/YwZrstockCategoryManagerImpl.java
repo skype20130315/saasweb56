@@ -42,7 +42,7 @@ public class YwZrstockCategoryManagerImpl extends BaseManagerImpl implements YwZ
 			String TableName = "YW_ZRSTOCK"+stock.getSgcode();
 			StringBuffer countSql = new StringBuffer( "select count(*) from (select P.SHPCODE,P.SHPNAME,G.GDCATID,G.GDCATNAME,G.GDSPEC,G.GDUNIT,S.SUPID,S.SUPNAME,SUM(Z.ZSKCSL) ZSKCSL,SUM(Z.ZSKCJE) ZSKCJE FROM "+TableName+" Z left join INF_GOODS G on Z.ZSSGCODE=G.GDSGCODE  and Z.ZSGDID=G.GDID left join INF_SHOP P on G.GDSGCODE=P.SGCODE and Z.ZSMFID=P.SHPCODE  left JOIN INF_SUPINFO S ON S.SUPSGCODE=Z.ZSSGCODE AND S.SUPID=Z.ZSSUPID " );
 			StringBuffer totalSql = new StringBuffer( "SELECT cast('合计：' as varchar2(30)) ZSGXTIME,SUM(ZSKCSL) ZSKCSL,SUM(ZSKCJE) ZSKCJE FROM "+TableName+" Z left join INF_GOODS G on Z.ZSSGCODE=G.GDSGCODE  and Z.ZSGDID=G.GDID left join INF_SHOP P on G.GDSGCODE=P.SGCODE and Z.ZSMFID=P.SHPCODE  left JOIN INF_SUPINFO S ON S.SUPSGCODE=Z.ZSSGCODE AND S.SUPID=Z.ZSSUPID " );
-			StringBuffer sql = new StringBuffer( "select (sysdate-1) as ZSGXTIME, P.SHPCODE,P.SHPNAME,G.GDCATID,G.GDCATNAME,G.GDSPEC,G.GDUNIT,S.SUPID,S.SUPNAME,SUM(Z.ZSKCSL) ZSKCSL,SUM(Z.ZSKCJE) ZSKCJE FROM "+TableName+" Z left join INF_GOODS G on Z.ZSSGCODE=G.GDSGCODE  and Z.ZSGDID=G.GDID left join INF_SHOP P on G.GDSGCODE=P.SGCODE and Z.ZSMFID=P.SHPCODE left JOIN INF_SUPINFO S ON S.SUPSGCODE=Z.ZSSGCODE AND S.SUPID=Z.ZSSUPID " );
+			StringBuffer sql = new StringBuffer( "select (sysdate-1) as ZSGXTIME, P.SHPCODE,P.SHPNAME,G.GDID,G.GDNAME,G.GDBARCODE,G.GDCATID,G.GDCATNAME,G.GDSPEC,G.GDUNIT,S.SUPID,S.SUPNAME,SUM(Z.ZSKCSL) ZSKCSL,SUM(Z.ZSKCJE) ZSKCJE FROM "+TableName+" Z left join INF_GOODS G on Z.ZSSGCODE=G.GDSGCODE  and Z.ZSGDID=G.GDID left join INF_SHOP P on G.GDSGCODE=P.SGCODE and Z.ZSMFID=P.SHPCODE left JOIN INF_SUPINFO S ON S.SUPSGCODE=Z.ZSSGCODE AND S.SUPID=Z.ZSSUPID " );
 
 			/*查询条件*/
 			StringBuffer whereStr = new StringBuffer(" where 1=1 ");
@@ -63,7 +63,7 @@ public class YwZrstockCategoryManagerImpl extends BaseManagerImpl implements YwZ
 			}
 			
 			/*合计，总条数查询*/
-			countSql.append(whereStr).append(" group by P.SHPCODE,P.SHPNAME,G.GDCATID,G.GDCATNAME,G.GDSPEC,G.GDUNIT,S.SUPID,S.SUPNAME)temp1 ");;
+			countSql.append(whereStr).append(" group by P.SHPCODE,P.SHPNAME,G.GDID,G.GDNAME,G.GDBARCODE,G.GDCATID,G.GDCATNAME,G.GDSPEC,G.GDUNIT,S.SUPID,S.SUPNAME)temp1 ");;
 			List lstResult = dao.executeSqlCount( countSql.toString() );
 			if( lstResult != null ){
 				result.setTotal( Integer.parseInt( lstResult.get(0).toString() ) );
