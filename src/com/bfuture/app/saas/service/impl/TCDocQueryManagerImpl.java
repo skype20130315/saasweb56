@@ -28,7 +28,7 @@ public class TCDocQueryManagerImpl extends BaseManagerImpl
         ReturnObject result = new ReturnObject();
         return result;
     }
-
+  
     public ReturnObject ExecOther(String actionType, Object o[])
     {
         ReturnObject result = new ReturnObject();
