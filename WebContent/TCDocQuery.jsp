@@ -84,7 +84,7 @@
 				    {field:'GDNAME',title:'商品名称',width:140,align:'left',sortable:true},			
 				    {field:'GDSPEC',title:'规格',width:65,sortable:true},			
 				    {field:'GDUNIT',title:'单位',width:65,align:'center',sortable:true},
-				    {field:'BARCODE',title:'商品条码',width:65,align:'center',sortable:true},
+				    {field:'GDBARCODE',title:'商品条码',width:65,align:'center',sortable:true},
 				    {field:'BTDSL',title:'退厂数量',width:70,align:'center',sortable:true} ,
 					{field:'BTDHSJJ',title:'含税进价',width:78,align:'center',sortable:true} ,
 			        {field:'BTDHSJJJE',title:'含税进价金额',width:78,align:'center',sortable:true}
