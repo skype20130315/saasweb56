@@ -23,7 +23,7 @@
 	String startDate_= new SimpleDateFormat("yyyy-MM-dd").format(date);
 %>
 <script type="text/javascript">
-		var now = new Date();
+		var now = new Date(); 
 		now.setDate( now.getDate() - 7 );
 		$("#startDate").val( now.format('yyyy-MM-dd') );
 		$("#endDate").attr("value",new Date().format('yyyy-MM-dd'));
