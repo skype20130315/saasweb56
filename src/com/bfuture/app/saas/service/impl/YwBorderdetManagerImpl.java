@@ -52,8 +52,8 @@ public class YwBorderdetManagerImpl extends BaseManagerImpl implements YwBorderd
 		ReturnObject result = new ReturnObject();
 		try{
 			YwBorderdet yb = (YwBorderdet)o[0];
-			StringBuffer sql = new StringBuffer( "select yb.BODSGCODE, yb.BODBILLNO, yb.BODSHMFID, yb.BODGDID, yb.BODSL, yb.BODTAX, yb.BODHSJJ, yb.BODHSJJJE, yb.TEMP1, yb.TEMP2, yb.TEMP3, yb.TEMP4, yb.TEMP5, yb.BODTIME, yb.BODFILE, ig.GDNAME, ig.GDBARCODE, ig.GDSPEC, ig.GDUNIT from YW_BORDERDET yb left join INF_GOODS ig on yb.BODSGCODE = ig.GDSGCODE and yb.BODGDID = ig.GDID where 1=1 " );			
-			StringBuffer totalSql =  new StringBuffer( "select cast('合计' as varchar2(32)) BODGDID,SUM(BODSL) BODSL,SUM(BODHSJJ) BODHSJJ,SUM(BODHSJJJE) BODHSJJJE from YW_BORDERDET yb where 1=1 " );
+			StringBuffer sql = new StringBuffer( "select yb.BODSGCODE, yb.BODBILLNO, yb.BODSHMFID, yb.BODGDID, yb.BODSL, yb.BODTAX, yb.BODHSJJ, yb.BODHSJJJE, yb.TEMP1, yb.TEMP2, yb.TEMP3, yb.TEMP4, yb.TEMP5, yb.BODTIME, yb.BODFILE, ig.GDNAME, ig.GDBARCODE, ig.GDSPEC, ig.GDUNIT from YW_BORDERDET yb left join INF_GOODS ig on yb.BODSGCODE = ig.GDSGCODE and yb.BODGDID = ig.GDID  " );			
+			StringBuffer totalSql =  new StringBuffer( "select cast('合计' as varchar2(32)) BODGDID,SUM(BODSL) BODSL,SUM(BODHSJJ) BODHSJJ,SUM(BODHSJJJE) BODHSJJJE from YW_BORDERDET yb" );
 
 			/*查询条件*/
 			StringBuffer whereStr = new StringBuffer(" where 1=1 ");
