@@ -27,7 +27,6 @@
 		now.setDate( now.getDate() - 7 );
 		$("#startDate").val( now.format('yyyy-MM-dd') );
 		$("#endDate").attr("value",new Date().format('yyyy-MM-dd'));
-		
 		$(function(){
 			$("#QueryDetailTable").css("display","none");
 			$('#TCDoc').datagrid({
@@ -54,10 +53,8 @@
 				    {field:'BTHSHTIME',title:'审核日期',width:100,align:'center',sortable:true},	
 					{field:'BTHSL',title:'数量',width:95,align:'center',sortable:true},
 			        {field:'BTHHSJJJE',title:'金额',width:95,align:'center',sortable:true}
-					<%if("L".equals(userType)){%>
 					,{field:'BTHSUPID',title:'供应商编码',width:95,align:'center',sortable:true},	
 					{field:'SUPNAME',title:'供应商名称',width:138,align:'center',sortable:true}
-					<%}%>
 				]],
 				toolbar:[{
 					text:'导出Excel',
@@ -80,16 +77,14 @@
 				showFooter:true,
 				loadMsg:'加载数据...',				
 				columns:[[
-					{field:'BTDGDID',title:'商品编码',width:140,sortable:true},
-					{field:'BTDBARCODE',title:'商品条码',width:65,align:'center',sortable:true},
-				    {field:'GDNAME',title:'商品名称',width:140,align:'left',sortable:true},			
+					{field:'BTDGDID',title:'商品编码',width:100,sortable:true},
+					{field:'BTDBARCODE',title:'商品条码',width:140,sortable:true},
+				    {field:'GDNAME',title:'商品名称',width:265,align:'left',sortable:true},			
 				    {field:'GDSPEC',title:'规格',width:65,sortable:true},			
 				    {field:'GDUNIT',title:'单位',width:65,align:'center',sortable:true},
-				    
 				    {field:'BTDSL',title:'退厂数量',width:70,align:'center',sortable:true} ,
 					{field:'BTDHSJJ',title:'含税进价',width:78,align:'center',sortable:true} ,
 			        {field:'BTDHSJJJE',title:'含税进价金额',width:78,align:'center',sortable:true}
-					
 				]],
 				pagination:true,
 				rownumbers:true
@@ -224,15 +219,8 @@
 								ACTION_MANAGER : 'tcdocQueryManager',										 
 								list:[{
 									exportExcel : true,
-									<%
-									if("L".equalsIgnoreCase( currUser.getSutype().toString()) ){
-									%>
-									enTitle: ['BTHBILLNO','BTHTHMFID','BTHSHTIME','SHPNAME','BTDSL','BTDHSJJJE','BTHSUPID','SUPNAME'],
+									enTitle: ['BTHBILLNO','BTHTHMFID','BTHSHTIME','SHPNAME','BTHSL','BTHHSJJJE','BTHSUPID','SUPNAME'],
 									cnTitle: ['退厂单号','门店编码','审核日期','门店名称','数量','金额','供应商编码','供应商名称'],
-									<%}else{%>
-									enTitle: ['BTHBILLNO','BTHTHMFID','BTHSHTIME','SHPNAME','BTDSL','BTDHSJJJE' ],
-									cnTitle: ['退厂单号','门店编码','审核日期','门店名称','数量','金额'],
-									<%}%>
 									sheetTitle: '退厂单查询',
 									sgcode : User.sgcode,
 									supcode : supcode,
@@ -309,7 +297,7 @@
 
 		<td width="250" style="border: none;">起始日期：&nbsp;&nbsp;<input
 			type="text" id="startDate" name="startDate" value="" size="20"
-			onClick="WdatePicker({isShowClear:false,readOnly:true,maxDate:'#F{$dp.$D(\'endDate\')}'<%if(currUser.getSgcode().equals("3018")&&currUser.getSutype().toString().equalsIgnoreCase("S")){ %>,minDate:'<%=startDate_%>'<% } %>});"size="20" /></td>
+			onClick="WdatePicker({isShowClear:false,readOnly:true,maxDate:'#F{$dp.$D(\'endDate\')}'});"size="20" /></td>
 		<td width="250" style="border: none;">结束日期：<input type="text"
 			id="endDate" name="endDate" value="" size="20"
 			onClick="WdatePicker({isShowClear:false,readOnly:true,minDate:'#F{$dp.$D(\'startDate\')}',maxDate:'%y-%M-%d'});" /></td>
@@ -343,24 +331,22 @@
                <td height="24" colspan="2" align="left" style="border:none; color:#33CCFF;"><span class="STYLE4">退厂单明细</span></td>
            </tr>
              <tr>
-               <td width="180" style="border:none;">退厂单号 ： 
-               <span   id="BTLLNO" name="BTLLNO"></span></td>
-                <td width="180"  style="border:none;">审核日期 ： 
-                 <span   id="shtime" name="shtime"></span></td>
+               <td width="450" style="border:none;">退厂单号 ： <span   id="BTLLNO" name="BTLLNO"></span></td>
+               <td width="450"style="border:none;">审核日期 ：<span   id="shtime" name="shtime"></span></td>
            </tr>
             <tr>
-               <td width="180"  style="border:none;">退货门店 ：
+               <td width="450"  style="border:none;">退货门店 ：
                <span   id="shopname" name="shopname"></span>   
                </td>
                
-               <td width="180" style="border:none;"><font style="text-align:center;letter-spacing:25px">备注</font> ：
+               <td width="450" style="border:none;"><font style="text-align:center;letter-spacing:25px">备注</font> ：
                  <span   id="memo" name="memo"></span>             </td>
            </tr>
              <tr>
-               <td width="180"  style="border:none;">供&nbsp;&nbsp;应&nbsp;&nbsp;商&nbsp;&nbsp;：
+               <td width="450"  style="border:none;">供&nbsp;&nbsp;应&nbsp;&nbsp;商&nbsp;&nbsp;：
                <span  id="supname" name="supname"></span>
                </td>
-               <td></td>
+               <td>&nbsp;</td>
            </tr>
            <tr><td colspan="2" style="text-align:right"></td></tr>
            <tr><td colspan="2">
