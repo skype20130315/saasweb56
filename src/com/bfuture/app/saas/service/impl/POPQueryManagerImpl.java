@@ -70,10 +70,10 @@ public class POPQueryManagerImpl extends BaseManagerImpl
                     Sql.append((new StringBuilder(" and g.gdname like '%")).append(popQuery.getPopgdname()).append("%' ").toString());
                 }
                 if(StringUtil.isNotEmpty(popQuery.getStartDate())){
-                    Sql.append(" and p.PPKSRQ >= to_date('").append(popQuery.getStartDate()).append("','yyyy-MM-dd')");
+                    Sql.append(" and p.PPSHRQ >= to_date('").append(popQuery.getStartDate()).append("','yyyy-MM-dd')");
                 }
                 if(StringUtil.isNotEmpty(popQuery.getEndDate())){
-                    Sql.append(" and p.PPKSRQ <= to_date('").append(popQuery.getEndDate()).append("','yyyy-MM-dd')");
+                    Sql.append(" and p.PPSHRQ <= to_date('").append(popQuery.getEndDate()).append("','yyyy-MM-dd')");
                 }
                 if(popQuery.getOrder() != null && popQuery.getSort() != null){
                     Sql.append(" order by ").append(popQuery.getSort()).append(" ").append(popQuery.getOrder());
@@ -103,9 +103,9 @@ public class POPQueryManagerImpl extends BaseManagerImpl
                 if(StringUtil.isNotEmpty(popQuery.getPopgdname()))
                     sumsql.append((new StringBuilder(" and g.gdname like '%")).append(popQuery.getPopgdname()).append("%' ").toString());
                 if(StringUtil.isNotEmpty(popQuery.getStartDate()))
-                    sumsql.append(" and p.PPKSRQ >= to_date('").append(popQuery.getStartDate()).append("','yyyy-MM-dd')");
+                    sumsql.append(" and p.PPSHRQ >= to_date('").append(popQuery.getStartDate()).append("','yyyy-MM-dd')");
                 if(StringUtil.isNotEmpty(popQuery.getEndDate()))
-                    sumsql.append(" and p.PPKSRQ <= to_date('").append(popQuery.getEndDate()).append("','yyyy-MM-dd')");
+                    sumsql.append(" and p.PPSHRQ <= to_date('").append(popQuery.getEndDate()).append("','yyyy-MM-dd')");
                 List lstSumResult = dao.executeSql(sumsql.toString());
                 StringBuffer count = null;
                 if(flag_3010){
@@ -131,9 +131,9 @@ public class POPQueryManagerImpl extends BaseManagerImpl
                 if(StringUtil.isNotEmpty(popQuery.getPopgdname()))
                     count.append((new StringBuilder(" and g.gdname like '%")).append(popQuery.getPopgdname()).append("%' ").toString());
                 if(StringUtil.isNotEmpty(popQuery.getStartDate()))
-                    count.append(" and p.PPKSRQ >= to_date('").append(popQuery.getStartDate()).append("','yyyy-MM-dd')");
+                    count.append(" and p.PPSHRQ >= to_date('").append(popQuery.getStartDate()).append("','yyyy-MM-dd')");
                 if(StringUtil.isNotEmpty(popQuery.getEndDate()))
-                    count.append(" and p.PPKSRQ <= to_date('").append(popQuery.getEndDate()).append("','yyyy-MM-dd')");
+                    count.append(" and p.PPSHRQ <= to_date('").append(popQuery.getEndDate()).append("','yyyy-MM-dd')");
                 List resultNum = dao.executeSqlCount(count.toString());
                 int num = Integer.parseInt(resultNum.get(0).toString());
                 int limit = popQuery.getRows();
